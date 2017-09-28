@@ -3,23 +3,23 @@ Researching methods for comparing images
 
 ## Methods for comparing images
 
-1. Structural Similarity Index (SSIM)
+* Structural Similarity Index (SSIM)
 
   This method compares the perceived structural similarity between images. It compares parts of the image instead of comparing the whole image. When compared to other comparing methods such as Mean Squared Error (MSE) which only estimates the errors in the images.[1]
 
   An implementation on this method can be found in the 'scikit-image' collection, in the module 'measure'. It can also be implemented using OpenCV by applying the SSIM algorithm directly.
 
-2. Histogram Comparison
+* Histogram Comparison
 
   Histograms are a way of visualising change over time of a particular object or system. The Histogram Comparison method compares histograms generated from the pixels of each image and compares them. It can detect which parts of the image are the same and which are different. This methods works because humans use colours to recognise objects. [2]
 
   The library 'numpy' can generate histograms which then can be compared to spot the differences between images.
 
-3. Local Invariant Feature Detection
+* Local Invariant Feature Detection
 
   Similar to the SSIM method, the Local Invariant Feture Detection method finds Local Features of a image and compares them to it's neighbours. Multiple properties can be compared such as intensity, colour and texture. [3]
 
-  There are multiple algoithms for Feature Detection such as Corner Detection, SIFT, SURF, FAST or ORB. ORB (Oriented FAST and Rotated BRIEF) is a free alternative made by the developers of OpenCV to other algorithms which are patented. [4]
+  There are multiple algoithms for Feature Detection such as Corner Detection, SIFT, SURF, FAST or ORB. ORB (Oriented FAST and Rotated BRIEF) is a free alternative solution made by the developers of OpenCV to other algorithms which are patented. [4]
 
 ## Choosing a method
 
