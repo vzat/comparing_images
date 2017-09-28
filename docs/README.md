@@ -1,2 +1,2 @@
-# comparing_images
+# Blog
 Comparing two images and spotting the differences
