@@ -49,7 +49,7 @@ def displayORB(window, image):
 ```
 
 ### Feature Matching
-While it doesn't find as many key features in the images, when combined with a Brute-Force Matching algorithm such as BFMatcher it finds many common features.
+While it doesn't find as many key features in the images, when combined with a Brute-Force Matching algorithm such as BFMatcher it finds many common features. These are the best 250 matches.
 
 | Common Features using ORB and BFMatcher |
 | :---: |
@@ -96,7 +96,7 @@ def displayAKAZE(window, image):
     cv2.imshow(window, newImage)
 ```
 
-By comparing the images using the BFMatching algorithm the folowing similarities are found.
+By comparing the images using the BFMatching algorithm the folowing 250 best similarities are found.
 
 | Common Features using AKAZE and BFMatcher |
 | :---: |
