@@ -24,9 +24,10 @@ def displayFAST(window, image, nms=1):
     cv2.imshow(window, corners)
 ```
 
+
 ## ORB - Oriented FAST and Rotated BRIEF [2]
 
-### KeyPoints Detection
+### Keypoints Detection
 This is a feature detection algorithm created by the developers of opencv. It provides similar features to other patented feature detection algorithms such as SURF or SIFT. 
 
 | PCB1 | PCB2 |
@@ -71,6 +72,7 @@ keyPoints1, desc1 = orb.detectAndCompute(I1, None)
 keyPoints2, desc2 = orb.detectAndCompute(I2, None)
 showCommon('orbFeatures', I1, keyPoints1, desc1, I2, keyPoints2, desc2)
 ```
+
 
 ## AKAZE [3]
 
@@ -119,9 +121,19 @@ showCommon('akazeFeatures', I1, keyPoints1, desc1, I2, keyPoints2, desc2)
 ```
 
 
+## Comparing the Algorithms
+The FAST algorithm seems to detect the most common features but the lack of a descriptor generator makes this method harder to use. 
+
+ORB compared to FAST, not only has a compute function for creating descriptors, but it can also compare images that are not in the same orientation. In fact this algorithm uses FAST for feature detection, BRISK for creating the descriptor and it also has an added feature of detecting feature even if they are rotated.
+
+AKAZE works similarly to ORB, with some differences. While AKAZE is slower than ORB, especially for high-resolution images, it provides more correct matches between images[4]. This can be clearly seen in the images above showing the common features between the images.
+
+
 ## References:
 [1] 'FAST Algorithm for Corner Detection', 2014, [Online]. Available: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_fast/py_fast.html. [Accessed: 2017-10-05]
 
 [2] 'ORB (Oriented FAST and Rotated BRIEF)', 2014, [Online]. Available: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_orb/py_orb.html#orb. [Accessed: 2017-10-05]
 
 [3] 'AKAZE local features matching', 2014, [Online]. Available: http://docs.opencv.org/3.0-beta/doc/tutorials/features2d/akaze_matching/akaze_matching.html. [Accessed: 2017-10-05]
+
+[4] Daniel R. Roos, Elcio H. Shiguemori and Ana Carolina Lorena, 'Comparing ORB and AKAZE for visual odometry of unmanned aerial vehicles', 2015
