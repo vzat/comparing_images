@@ -58,30 +58,62 @@ def bfmatcherknn(window, img1, kp1, desc1, img2, kp2, desc2, normType = cv2.NORM
 #### NORM_HAMMING
 Uses Hamming Distance to measure the distance between features.
 
-| w/o Cross Checking | w/ Cross Checking | w/ Ratio Test |
-| :---: | :---: | :---: |
-| <img src="images/BFMatcher_NORM_HAMMING_without_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_HAMMING_with_RatioTest.jpg" width="300"> |
+| w/o Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING_without_CrossCheck.jpg" width="600"> |
+
+| w/ Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="600"> | 
+
+| w/ Ratio Test |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING_with_RatioTest.jpg" width="600"> |
 
 #### NORM_HAMMING2
 Uses a modified Hamming Distance Algorithm to measure the distance between features. It's usually used for feature detection using ORB.
 
-| w/o Cross Checking | w/ Cross Checking | w/ Ratio Test |
-| :---: | :---: | :---: |
-| <img src="images/BFMatcher_NORM_HAMMING2_without_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_HAMMING2_with_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_HAMMING2_with_RatioTest.jpg" width="300"> |
+| w/o Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING2_without_CrossCheck.jpg" width="600"> |
+
+| w/ Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING2_with_CrossCheck.jpg" width="600"> | 
+
+| w/ Ratio Test |
+| :---: |
+| <img src="images/BFMatcher_NORM_HAMMING2_with_RatioTest.jpg" width="600"> |
 
 #### NORM_L1
 Uses the Manhattan Distance to measure the distance between features.
 
-| w/o Cross Checking | w/ Cross Checking | w/ Ratio Test |
-| :---: | :---: | :---: |
-| <img src="images/BFMatcher_NORM_L1_without_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_L1_with_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_L1_with_RatioTest.jpg" width="300"> |
+| w/o Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_L1_without_CrossCheck.jpg" width="600"> |
+
+| w/ Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_L1_with_CrossCheck.jpg" width="600"> | 
+
+| w/ Ratio Test |
+| :---: |
+| <img src="images/BFMatcher_NORM_L1_with_RatioTest.jpg" width="600"> |
 
 #### NORM_L2
 Uses Euclidian Distance to measure the distance between features.
 
-| w/o Cross Checking | w/ Cross Checking | w/ Ratio Test |
-| :---: | :---: | :---: |
-| <img src="images/BFMatcher_NORM_L2_without_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_L2_with_CrossCheck.jpg" width="300"> | <img src="images/BFMatcher_NORM_L2_with_RatioTest.jpg" width="300"> |
+| w/o Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_L2_without_CrossCheck.jpg" width="600"> |
+
+| w/ Cross Checking |
+| :---: |
+| <img src="images/BFMatcher_NORM_L2_with_CrossCheck.jpg" width="600"> | 
+
+| w/ Ratio Test |
+| :---: |
+| <img src="images/BFMatcher_NORM_L2_with_RatioTest.jpg" width="600"> |
 
 
 All four algorithms for measuring distance provide similar results with NORM_HAMMING and NORM_L1 giving the best results. For binary based descriptors (such as AKAZE's descriptors), the OpenCV documentation recommends using NORM_HAMMING[2]. The images above also showed that Cross Checking provides better results, and the Ratio Test provides even better results in the best 250 matches.
@@ -90,7 +122,7 @@ All four algorithms for measuring distance provide similar results with NORM_HAM
 
 | Cross Checking | Ratio Test |
 | :---: | :---: |
-| <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="400"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_RatioTest.jpg" width="400"> |
+| <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="300"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_RatioTest.jpg" width="300"> |
 
 When all the feature matches are displayed, the Ratio Test only shows a small number of similarities where Cross Checking found a lot more. While the Ratio Test whould be better for finding objects from one image in another, this project tries to find the differences between the images, so the algorithm that finds the most similarities whould be a better candidate for the project.
 
@@ -137,7 +169,7 @@ def flannmatcher(window, img1, kp1, desc1, img2, kp2, desc2, flannIndex = 0, tre
 
 | FLANN | BFMatcher |
 | :---: | :---: |
-| <img src="images/FLANNMatcher.jpg" width="400"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="400"> |
+| <img src="images/FLANNMatcher.jpg" width="300"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="300"> |
 
 FLANN provides similar results to the BFMatcher algorithm using the Ratio Test. While the matches are excellent, there are not enough matches to be able to then find the differences between the images.
 
