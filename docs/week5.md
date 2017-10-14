@@ -87,6 +87,7 @@ Uses Euclidian Distance to measure the distance between features.
 All four algorithms for measuring distance provide similar results with NORM_HAMMING and NORM_L1 giving the best results. For binary based descriptors (such as AKAZE's descriptors), the OpenCV documentation recommends using NORM_HAMMING[2]. The images above also showed that Cross Checking provides better results, and the Ratio Test provides even better results in the best 250 matches.
 
 ### Comparing Cross Checking and Ratio Test on all the matches using NORM_HAMMING
+
 | Cross Checking | Ratio Test |
 | :---: | :---: |
 | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="400"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_RatioTest.jpg" width="400"> |
@@ -133,6 +134,7 @@ def flannmatcher(window, img1, kp1, desc1, img2, kp2, desc2, flannIndex = 0, tre
 ```
 
 ### Comparing FLANN with BFMatcher
+
 | FLANN | BFMatcher |
 | :---: | :---: |
 | <img src="images/FLANNMatcher.jpg" width="400"> | <img src="images/ALL_BFMatcher_NORM_HAMMING_with_CrossCheck.jpg" width="400"> |
