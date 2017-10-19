@@ -65,6 +65,7 @@ def getDifferences(img1, img2):
     kp1, desc1 = akaze.detectAndCompute(img1, None)
     kp2, desc2 = akaze.detectAndCompute(img2, None)
 
+    # https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html
     bf = cv2.BFMatcher(normType = cv2.NORM_HAMMING, crossCheck = True)
     matches = bf.match(desc1, desc2)
 
@@ -108,6 +109,9 @@ _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_TREE, met
 bestContour = contours[0]
 maxArea = 0
 for contour in contours:
+    #       [1] OpenCV, 'Contour Approximation', 2015. [Online].
+    #           Available: http://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html
+    #           [Accessed: 2017-10-20]
     arcPercentage = 0.01
     epsilon = cv2.arcLength(curve = contour, closed = True) * arcPercentage
     corners = cv2.approxPolyDP(curve = contour, epsilon = epsilon, closed = True)
