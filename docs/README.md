@@ -10,3 +10,5 @@ Comparing two images and spotting the differences
 [Week 4 - Comparing different feature detection algorithms](week4.md)
 
 [Week 5 - Comparing Descriptor Matching Algorithms and Options](week5.md)
+
+[Week 6 - Finding unmatched features](week6.md)
