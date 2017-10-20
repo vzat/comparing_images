@@ -63,6 +63,7 @@ for dif in img1Dif:
 ```
 
 ### Result
+
 | PCB1 | MASK |
 | :---: | :---: |
 | <img src="images/pcb1.jpg" width="300"> | <img src="images/diffsPixels.jpg" width="300"> |
@@ -77,6 +78,7 @@ mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
 ```
 
 ### Result
+
 | Original Mask | Closed Mask |
 | :---: | :---: |
 | <img src="images/diffsPixels.jpg" width="300"> | <img src="images/diffsClosed.jpg" width="300"> |
@@ -100,6 +102,7 @@ for contour in contours:
 ```
 
 ### Result
+
 | Differences in PCB1 |
 | :---: |
 | <img src="images/diffsNoisy.jpg" width="600"> |
