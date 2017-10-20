@@ -102,8 +102,12 @@ mask[:, :] = 0
 for dif in img1Dif:
     mask[dif['y'], dif['x']] = 255
 
+cv2.imwrite(outputPath + 'mask1' + fileExtension, mask)
+
 shape = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
 mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
+
+cv2.imwrite(outputPath + 'mask2' + fileExtension, mask)
 
 _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_NONE)
 bestContour = contours[0]
@@ -133,6 +137,7 @@ for contour in contours:
 
 # cv2.imshow('mask', mask)
 cv2.imshow('pcb1', pcb1)
+cv2.imwrite(outputPath + 'diffs' + fileExtension, pcb1)
 # cv2.imshow('pcb2', pcb2)
 cv2.waitKey(0)
 
