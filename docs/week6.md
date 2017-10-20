@@ -80,3 +80,5 @@ mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
 | Original Mask | Closed Mask |
 | :---: | :---: |
 | <img src="images/diffsPixels.jpg" width="300"> | <img src="images/diffsClosed.jpg" width="300"> |
+
+## Step 4: Finding contours
