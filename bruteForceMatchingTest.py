@@ -25,6 +25,7 @@ def bfmatcher(window, img1, kp1, desc1, img2, kp2, desc2, normType = cv2.NORM_HA
     cv2.imwrite(outputPath + window + fileExtension, matchesImage)
     cv2.imshow(window, matchesImage)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def bfmatcherknn(window, img1, kp1, desc1, img2, kp2, desc2, normType = cv2.NORM_HAMMING, k = 2, noMatches = 250):
     bf = cv2.BFMatcher(normType = normType)
@@ -44,6 +45,7 @@ def bfmatcherknn(window, img1, kp1, desc1, img2, kp2, desc2, normType = cv2.NORM
     cv2.imwrite(outputPath + window + fileExtension, matchesImage)
     cv2.imshow(window, matchesImage)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def flannmatcher(window, img1, kp1, desc1, img2, kp2, desc2, flannIndex = 0, trees = 5, checks = 50, noMatches = 250):
     indexParams = dict(algorithm = flannIndex, trees = trees)
@@ -77,6 +79,7 @@ def flannmatcher(window, img1, kp1, desc1, img2, kp2, desc2, flannIndex = 0, tre
     cv2.imwrite(outputPath + window + fileExtension, matchesImage)
     cv2.imshow(window, matchesImage)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
 pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')

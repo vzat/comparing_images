@@ -135,7 +135,7 @@ for contour in contours:
 cv2.imshow('pcb1', pcb1)
 # cv2.imshow('pcb2', pcb2)
 cv2.waitKey(0)
-
+cv2.destroyAllWindows()
 
 
 # Creating a mask with white pixels

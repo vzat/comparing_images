@@ -111,3 +111,4 @@ keyPoints2, desc2 = akaze.detectAndCompute(I2, None)
 showDifs('akazeDif', I1, keyPoints1, desc1, I2, keyPoints2, desc2)
 
 key = cv2.waitKey(0)
+cv2.destroyAllWindows()
