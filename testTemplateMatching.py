@@ -41,11 +41,12 @@ methods = [ 'cv2.TM_CCOEFF',
 
 for methodName in methods:
     method = eval(methodName)
+    img = pcb1.copy()
 
     if methodName == 'cv2.TM_SQDIFF' or methodName == 'cv2.TM_SQDIFF_NORMED':
-        findBestMatch(methodName, pcb1, patch, method, false)
+        findBestMatch(methodName, img, patch, method, False)
     else:
-        findBestMatch(methodName, pcb1, patch, method)
+        findBestMatch(methodName, img, patch, method)
 
 # while True:
 #     for methodName in methods:
