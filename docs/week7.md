@@ -38,14 +38,14 @@ During testing the unnormalised version of `cv2.TM_CCORR` provided consistent ba
 
 | Patch |
 | :---: |
-| <img src="images/diffsNoisy.jpg" width="600"> |
+| <img src="images/patch.jpg" width="200"> |
 
 ### First Image
 These are the best matches the algorithms have found for the patch in `pcb1.jpg`
 
 | PCB1 - cv2.TM_CCOEFF_NORMED | PCB1 - cv2.TM_CCORR_NORMED | PCB1 - cv2.TM_SQDIFF_NORMED |
 | :---: | :---: | :---: |
-| <img src="images/pcb1_cv2.TM_CCOEFF_NORMED" width="200"> | <img src="images/pcb1_cv2.TM_CCORR_NORMED" width="200"> | <img src="images/pcb1_cv2.TM_SQDIFF_NORMED" width="200"> |  
+| <img src="images/pcb1_cv2.TM_CCOEFF_NORMED.jpg" width="200"> | <img src="images/pcb1_cv2.TM_CCORR_NORMED.jpg" width="200"> | <img src="images/pcb1_cv2.TM_SQDIFF_NORMED.jpg" width="200"> |  
 
 The best match for each algorithm resulted in the following values:
 
@@ -62,7 +62,7 @@ These are the best matches the algorithms have found for the same patch in `pcb2
 
 | PCB2 - cv2.TM_CCOEFF_NORMED | PCB2 - cv2.TM_CCORR_NORMED | PCB2 - cv2.TM_SQDIFF_NORMED |
 | :---: | :---: | :---: |
-| <img src="images/pcb2_cv2.TM_CCOEFF_NORMED" width="200"> | <img src="images/pcb2_cv2.TM_CCORR_NORMED" width="200"> | <img src="images/pcb2_cv2.TM_SQDIFF_NORMED" width="200"> |  
+| <img src="images/pcb2_cv2.TM_CCOEFF_NORMED.jpg" width="200"> | <img src="images/pcb2_cv2.TM_CCORR_NORMED.jpg" width="200"> | <img src="images/pcb2_cv2.TM_SQDIFF_NORMED.jpg" width="200"> |  
 
 The best match for each algorithm resulted in the following values:
 
