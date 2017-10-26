@@ -12,3 +12,5 @@ Comparing two images and spotting the differences
 [Week 5 - Comparing Descriptor Matching Algorithms and Options](week5.md)
 
 [Week 6 - Finding unmatched features](week6.md)
+
+[Week 7 - Testing Template Matching](week7.md)
