@@ -23,6 +23,18 @@ def findBestMatch(window, img, patch, method, maxLoc = True):
     cv2.imwrite(outputPath + window + fileExtension, img)
     cv2.waitKey(0)
 
+def getBestMatch(img, patch):
+    patchSize = patch.shape
+
+    gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gPatch = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY)
+
+    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCOEFF_NORMED)
+
+    (_, value, _, (x, y)) = cv2.minMaxLoc(result)
+
+    return ((x, y), value)
+
 imagesPath = 'images/'
 outputPath = 'output/'
 fileExtension = '.jpg'
@@ -46,6 +58,8 @@ cv2.waitKey(0)
 
 patchSize = patch.shape
 
+print getBestMatch(pcb2, patch)
+
 # https://docs.opencv.org/trunk/d4/dc6/tutorial_py_template_matching.html
 methods = [
             # 'cv2.TM_CCOEFF',
@@ -65,10 +79,10 @@ for methodName in methods:
     # threshold, _ = cv2.threshold(src = img, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # img = cv2.Canny(image = img.copy(), threshold1 = 0.5 * threshold, threshold2 = threshold)
 
-    if methodName == 'cv2.TM_SQDIFF' or methodName == 'cv2.TM_SQDIFF_NORMED':
-        findBestMatch('pcb2_' + methodName, img, patch, method, False)
-    else:
-        findBestMatch('pcb2_' + methodName, img, patch, method)
+    # if methodName == 'cv2.TM_SQDIFF' or methodName == 'cv2.TM_SQDIFF_NORMED':
+        # findBestMatch('pcb2_' + methodName, img, patch, method, False)
+    # else:
+        # findBestMatch('pcb2_' + methodName, img, patch, method)
 
 # while True:
 #     for methodName in methods:
