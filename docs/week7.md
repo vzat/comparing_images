@@ -75,7 +75,22 @@ The best match for each algorithm resulted in the following values:
 Besides the first methods, the other methods have failed to found patch which is expected as it doesn't contain many similar features. Even so, from the values it can be seen `cv2.TM_COEFF` has the worst normalised value even though it has correctly identified the image.
 
 ## Finding the differences
-To verify if a patch is different, the coordinates of the best match is compared to the coordinates of the original patch. If the coordinates are different then it hasn't found a match. Otherwise a threshold (such as 0.5) is used, the areas that have a low match can be considered as containing a difference while if it's above the treshold then that area was found correctly in the second image.
+To verify if a patch is different, the coordinates of the best match is compared to the coordinates of the original patch. If the coordinates are different then it hasn't found a match. Otherwise a threshold (such as 0.5) is used, the areas that have a low match can be considered as containing a difference while if it's above the treshold then that area was found correctly in the second image. The following code can be used for that:
+
+### Code
+```python
+def getBestMatch(img, patch):
+    patchSize = patch.shape
+
+    gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gPatch = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY)
+
+    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCOEFF_NORMED)
+
+    (_, value, _, (x, y)) = cv2.minMaxLoc(result)
+
+    return ((x, y), value)
+```
 
 ## Conclusion
 From the above tests, it can be observed that `cv2.TM_COEFF` found the correct area of the image even with only a fraction of the patch being the same. Even so, the value resulted is very low which means is not even close to a perfect match. This requires further testing with the other areas found in the previous week. Also, Template Matching has the problem that it can only find a match if the features in both images are the same size and orientation [3]. A solution for this is currently being implemented by the other team members.
