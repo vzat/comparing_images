@@ -104,8 +104,14 @@ for dif in img1Dif:
 
 cv2.imwrite(outputPath + 'mask1' + fileExtension, mask)
 
+# shape = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+# mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
+
 shape = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
 mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
+shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+mask = cv2.erode(mask, shape, iterations = 1)
+mask = cv2.dilate(mask, shape, iterations = 10)
 
 cv2.imwrite(outputPath + 'mask2' + fileExtension, mask)
 
@@ -133,7 +139,8 @@ for contour in contours:
 # x, y, w, h = cv2.boundingRect(points = bestContour)
 # cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
-
+x, y, w, h = cv2.boundingRect(points = bestContour)
+print x, y, h, w
 
 # cv2.imshow('mask', mask)
 cv2.imshow('pcb1', pcb1)
