@@ -6,7 +6,7 @@ imagesPath = 'images/'
 outputPath = 'output/filters/'
 fileExtension = '.jpg'
 
-def convolution2D(img):
+def convolution2D(img, window):
    
   kernel = np.ones((5,5),np.float32)/25
   dst = cv2.filter2D(img,-1,kernel)
@@ -18,7 +18,7 @@ def convolution2D(img):
   cv2.imwrite(outputPath + window + fileExtension, imgs)
 
 
-def averaging(img):
+def averaging(img, window):
 
   blur = cv2.blur(img,(5,5))
    
@@ -27,7 +27,7 @@ def averaging(img):
   cv2.imshow(window, imgs)
   cv2.imwrite(outputPath + window + fileExtension, imgs)
 
-def gaussianBlur(img):
+def gaussianBlur(img, window):
   blur = cv2.GaussianBlur(img,(5,5),0)
 
   imgs = np.hstack((img, blur))
@@ -35,7 +35,7 @@ def gaussianBlur(img):
   cv2.imshow(window, imgs)
   cv2.imwrite(outputPath + window + fileExtension, imgs)
 
-def medianBlur(img):
+def medianBlur(img, window):
 
   median = cv2.medianBlur(img,5)
 
@@ -64,12 +64,18 @@ def fastN1MeansDenoising(img, window):
   cv2.imwrite(outputPath + window + fileExtension, imgs)
 
 pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
+pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 
-#convolution2D(pcb1, "convolution")
-#averaging(pcb1, "averaging")
-#gaussianBlur(pcb1, "gaussianBlur")
+#convolution2D(pcb1, "convolution1")
+#convolution2D(pcb2, "convolution2")
+#averaging(pcb1, "averaging1")
+#averaging(pcb2, "averaging2")
+#gaussianBlur(pcb1, "gaussianBlur1")
+#gaussianBlur(pcb2, "gaussianBlur2")
 #medianBlur(pcb1, "medianBlur")
-bilateralFilter(pcb1, "bilateralFilter")
-fastN1MeansDenoising(pcb1, "Denoised")
+#bilateralFilter(pcb1, "bilateralFilter1")
+#bilateralFilter(pcb2, "bilateralFilter2")
+fastN1MeansDenoising(pcb1, "Denoised1")
+fastN1MeansDenoising(pcb2, "Denoised2")
 
 key = cv2.waitKey(0)
