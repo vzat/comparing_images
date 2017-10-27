@@ -6,22 +6,27 @@ In order to find the human-visable differences in the image, we will first have 
 ## 2D Convolution [1]
 
 This method makes use of a Low Pass Filter through the OpenCV function cv2.filter2D(). This function convolves a kernel with an image. We will use the following kernel:
+
 |1  1  1  1  1|
+
 |1  1  1  1  1|
+
 |1  1  1  1  1| K = 1/25	
+
 |1  1  1  1  1|
+
 |1  1  1  1  1|
 
 The function will place the kernel over a square of 25 pixels and get the average value for all pixels in the square. It then assigns this value to the pixel in the center of the kernel. It repeats this process for all pixels.
 
 | PCB1 |
 | :---: |
-| <img src="images/convolution1.jpg" width="500"> |
+| <img src="../images/convolution1.jpg" width="500"> |
 
 
 | PCB2 |
 | :---: |
-| <img src="images/convolution2.jpg" width="500"> |
+| <img src="../images/convolution2.jpg" width="500"> |
 
 
 ### Code
@@ -49,11 +54,11 @@ Averaging makes use of a normalized box filter, i.e. all elements are set to 1. 
 
 | PCB1 |
 | :---: |
-| <img src="images/averaging1.jpg" width="500"> |
+| <img src="../images/averaging1.jpg" width="500"> |
 
 | PCB2 |
 | :---: |
-| <img src="images/averaging2.jpg" width="500">|
+| <img src="../images/averaging2.jpg" width="500">|
 
 ### Code
 ```python
@@ -81,11 +86,11 @@ Using a kernel like this should help remove noise while maintaining the integrit
 
 | PCB1 |
 | :---: |
-| <img src="images/gaussianBlur1.jpg" width="500"> |
+| <img src="../images/gaussianBlur1.jpg" width="500"> |
 
 | PCB2 |
 | :---: |
-| <img src="images/gaussianBlur2.jpg" width="500">|
+| <img src="../images/gaussianBlur2.jpg" width="500">|
 
 ### Code
 ```python
@@ -106,11 +111,11 @@ Bilateral Filtering aims fix the issues with Gaussian Blurring, specifically not
 
 | PCB1 |
 | :---: |
-| <img src="images/bilateralFilter1.jpg" width="500"> |
+| <img src="../images/bilateralFilter1.jpg" width="500"> |
 
 | PCB2 |
 | :---: |
-| <img src="images/bilateralFilter2.jpg" width="500"> |
+| <img src="../images/bilateralFilter2.jpg" width="500"> |
 
 ### Code
 ```python
@@ -135,11 +140,11 @@ This is very advanced technique. It is done by finding small windows in the imag
 
 | PCB1 |
 | :---: |
-| <img src="images/Denoised.jpg" width="500"> |
+| <img src="../images/Denoised.jpg" width="500"> |
 
 | PCB2 |
 | :---: |
-| <img src="images/Denoised2.jpg" width="500"> |
+| <img src="../images/Denoised2.jpg" width="500"> |
 
 ### Code
 ```python
