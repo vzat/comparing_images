@@ -12,7 +12,3 @@ Comparing two images and spotting the differences
 [Week 5 - Comparing Descriptor Matching Algorithms and Options](week5.md)
 
 [Week 6 - Finding unmatched features](week6.md)
-
-## Emmet's Docs
-
-[Cleaning the Image](cleaning_the_image.md)
