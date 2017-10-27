@@ -77,11 +77,17 @@ averaging(pcb2, "averaging2")
 
 ### Gaussian Blurring
 Instead of a box filter, Gaussian Blurring uses a Gaussian kernel. This kernel contains small pixel values on the outside that get higher towards the centre. Similar to this example: 
+
 |1  4  7  4  1|
+
 |4  16 26 16 4|
+
 |7  26 41 26 7| k=1/273
+
 |4  16 26 16 4|
+
 |1  4  7  4  1|
+
 Using a kernel like this should help remove noise while maintaining the integrity of the image.
 
 | PCB1 |
@@ -140,7 +146,7 @@ This is very advanced technique. It is done by finding small windows in the imag
 
 | PCB1 |
 | :---: |
-| <img src="../images/Denoised.jpg" width="500"> |
+| <img src="../images/Denoised1.jpg" width="500"> |
 
 | PCB2 |
 | :---: |
