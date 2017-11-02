@@ -100,7 +100,7 @@ def getDifferences(img1, img2):
 mask = np.zeros((img1Size[0], img1Size[1], 1), np.uint8)
 mask[:, :] = 0
 for dif in img1Dif:
-    mask[dif['y'], dif['x']] = 255
+    mask[int(dif['y']), int(dif['x'])] = 255
 
 shape = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
 mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)

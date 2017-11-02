@@ -20,7 +20,7 @@ pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 img1Size = pcb1.shape
 img2Size = pcb2.shape
 
-def getDifferences(img2, img1):
+def getDifferences(img1, img2):
     akaze = cv2.AKAZE_create()
     kp1, desc1 = akaze.detectAndCompute(img1, None)
     kp2, desc2 = akaze.detectAndCompute(img2, None)
@@ -64,9 +64,9 @@ mask[:, :] = 0
 for dif in img1Dif:
     mask[int(dif['y']), int(dif['x'])] = 255
 
-mask = cv2.resize(mask, dsize = (img1Size[1], img1Size[0]))
+mask = cv2.resize(mask, dsize = (int(0.5*img1Size[1]), int(0.5*img1Size[0])))
 
-shape1 = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+shape1 = cv2.getStructuringElement(cv2.MORPH_RECT, (4, 4))
 mask1 = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape1)
 
 #Change the shape to get a finer structure
@@ -76,16 +76,16 @@ shape1 = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
 mask1 = cv2.erode(mask1, shape1, iterations = 2)
 
 # Increase the kernel to make the rois larger
-shape1 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+shape1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
 
 #Enhances the components
-mask1 = cv2.dilate(mask1, shape1, iterations = 10)
+mask1 = cv2.dilate(mask1, shape1, iterations = 4)
 
-# cv2.imshow('Mask1', mask1)
+#cv2.imshow('Mask1', mask1)
 
 cv2.imshow("Mask", mask1)
 
-pcb1 = cv2.resize(pcb1, dsize = (img1Size[1], img1Size[0]))
+pcb1 = cv2.resize(pcb1, dsize = (int(0.5*img1Size[1]), int(0.5*img1Size[0])))
 
 _, contours, _ = cv2.findContours(image = mask1.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_NONE)
 for contour in contours:
