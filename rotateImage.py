@@ -3,6 +3,7 @@
 import numpy as np
 import cv2
 import easygui
+import math
 
 imagesPath = 'images/'
 outputPath = 'output/'
@@ -55,11 +56,79 @@ def getMatches(img1, img2):
 
 matches = getMatches(pcb1, pcb2)
 
+
 # Use the matches list to find the orientation of the second image
 # and rotate it to match the first one
 # You can access the values like this: matches['pt1']['x']
 # to get the x coordinate from the first image
 
-cv2.imshow('pcb1', pcb1)
-cv2.imshow('pcb2', pcb2)
+
+def getRotationAngle(matches):
+    point1AX = matches[0]['pt1']['x']
+    point1AY = matches[0]['pt1']['y']
+    point2AX = matches[0]['pt2']['x']
+    point2AY = matches[0]['pt2']['y']
+
+    point1BX = matches[1]['pt1']['x']
+    point1BY = matches[1]['pt1']['y']
+    point2BX = matches[1]['pt2']['x']
+    point2BY = matches[1]['pt2']['y']
+
+    m1 = ((point1BY - point1AY) / (point1BX - point1AX))
+    line1Angle = math.atan(m1)
+
+    m2 = ((point2BY - point2AY) / (point2BX - point2AX))
+    line2Angle = math.atan(m2)
+    
+    rotationAngle = line2Angle - line1Angle
+
+    rotationAngle = np.rad2deg(rotationAngle)
+
+    return(rotationAngle)
+
+
+rotationAngle = getRotationAngle(matches)
+
+
+
+# print(rotationAngle)
+
+
+def getDiameter(img):
+    h, w = np.shape(img)[:2]
+    hyp = (w*w + h*h)**(1/2)
+    return(int(hyp)+1)
+
+def addBorders(img):
+    hyp = getDiameter(img)
+    mask = np.zeros((hyp, hyp, 3), np.uint8)
+
+    y1, x1 = np.shape(mask)[:2]
+    cx = x1/2
+    cy = y1/2
+
+    y2, x2 = np.shape(img)[:2]
+    cx2 = x2/2
+    cy2 = y2/2 
+
+    mask[int(cy-cy2):int(cy+cy2) , int(cx-cx2):int(cx+cx2)] = img[0:y2, 0:x2]
+
+    return(mask)
+
+borderedImg = addBorders(pcb2)
+
+def rotateImage(img):
+    y, x = np.shape(img)[:2]
+    cx = x/2
+    cy = y/2
+
+    M = cv2.getRotationMatrix2D((cx,cy), rotationAngle, 1)
+    R = cv2.warpAffine(img, M, (x, y))
+
+    return R
+
+R = rotateImage(borderedImg)
+print(np.shape(R)[:2])
+
+cv2.imshow('Result', R)
 cv2.waitKey(0)
