@@ -6,9 +6,12 @@ def getBestMatch(img, patch):
     patchSize = patch.shape
 
     gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gImg = img.copy()
     gPatch = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY)
+    # gPatch = patch.copy()
 
-    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCORR_NORMED)
+    # cv2.TM_CCOEFF_NORMED or cv2.TM_CCORR_NORMED
+    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCOEFF_NORMED)
 
     (_, value, _, (x, y)) = cv2.minMaxLoc(result)
 
@@ -120,8 +123,8 @@ def getBestPatches(sourceImg, checkImg, patches, threshold = 0.5):
     bestPatches = []
     for (x, y, w, h) in patches:
         patch = sourceImg[y : y + h, x : x + w]
-        (_, matchValue)  = getBestMatch(checkImg, patch)
-        # print matchValue
+        ((mX, mY), matchValue)  = getBestMatch(checkImg, patch)
+        print getDistance(mX, mY, x, y), matchValue
         # cv2.imshow('Patch', patch)
         # cv2.waitKey(0)
         if matchValue < threshold:
@@ -164,8 +167,17 @@ fileExtension = '.jpg'
 
 pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
 pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
+#
+# pcb1 = cv2.cvtColor(pcb1, cv2.COLOR_BGR2GRAY)
+# pcb2 = cv2.cvtColor(pcb2, cv2.COLOR_BGR2GRAY)
+#
+# threshold, _ = cv2.threshold(src = pcb1, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+# pcb1 = cv2.Canny(image = pcb1.copy(), threshold1 = 0.5 * threshold, threshold2 = threshold)
+#
+# threshold, _ = cv2.threshold(src = pcb2, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+# pcb2 = cv2.Canny(image = pcb2.copy(), threshold1 = 0.5 * threshold, threshold2 = threshold)
 
-(pcb1, pcb2) = eqImgs(pcb1, pcb2)
+# (pcb1, pcb2) = eqImgs(pcb1, pcb2)
 
 # pcb1 = scaleImageDown(pcb1)
 # pcb2 = scaleImageDown(pcb2)
@@ -175,7 +187,7 @@ pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 
 mask = getMask(pcb1, pcb2)
 patches = getAllPatches(mask)
-bestPatches = getBestPatches(pcb1, pcb2, patches, 0.8)
+bestPatches = getBestPatches(pcb1, pcb2, patches, 0.5)
 
 for (x, y, w, h) in bestPatches:
     cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
