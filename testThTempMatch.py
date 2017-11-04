@@ -11,7 +11,7 @@ def getBestMatch(img, patch):
     # gPatch = patch.copy()
 
     # cv2.TM_CCOEFF_NORMED or cv2.TM_CCORR_NORMED
-    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCOEFF_NORMED)
+    result = cv2.matchTemplate(image = gImg, templ = gPatch, method = cv2.TM_CCORR_NORMED)
 
     (_, value, _, (x, y)) = cv2.minMaxLoc(result)
 
@@ -123,10 +123,7 @@ def getBestPatches(sourceImg, checkImg, patches, threshold = 0.5):
     bestPatches = []
     for (x, y, w, h) in patches:
         patch = sourceImg[y : y + h, x : x + w]
-        ((mX, mY), matchValue)  = getBestMatch(checkImg, patch)
-        print getDistance(mX, mY, x, y), matchValue
-        # cv2.imshow('Patch', patch)
-        # cv2.waitKey(0)
+        ((mX, mY), matchValue) = getBestMatch(checkImg, patch)
         if matchValue < threshold:
             bestPatches.append((x, y, w, h))
 
@@ -167,7 +164,7 @@ fileExtension = '.jpg'
 
 pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
 pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
-#
+
 # pcb1 = cv2.cvtColor(pcb1, cv2.COLOR_BGR2GRAY)
 # pcb2 = cv2.cvtColor(pcb2, cv2.COLOR_BGR2GRAY)
 #
@@ -185,12 +182,20 @@ pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 # pcb1 = cv2.fastNlMeansDenoisingColored(pcb1,None,10,10,7,21)
 # pcb2 = cv2.fastNlMeansDenoisingColored(pcb2,None,10,10,7,21)
 
+
+# pcbDif = pcb1.copy()
+# pcbDif = cv2.absdiff(pcb1, pcb2)
+# cv2.imshow('Differences', pcbDif)
+
+
 mask = getMask(pcb1, pcb2)
 patches = getAllPatches(mask)
-bestPatches = getBestPatches(pcb1, pcb2, patches, 0.5)
+bestPatches = getBestPatches(pcb1, pcb2, patches, 0.8)
 
 for (x, y, w, h) in bestPatches:
     cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
 cv2.imshow('Differences', pcb1)
+
+
 cv2.waitKey(0)
