@@ -15,6 +15,8 @@ Comparing two images and spotting the differences
 
 [Week 7 - Testing Template Matching](week7.md)
 
+[Week 8 - Testing Threshold Template Matching](week8.md)
+
 ## Emmet's Docs
 
 [Cleaning the Image](emmet/cleaning_the_image.md)
