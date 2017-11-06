@@ -117,6 +117,38 @@ def addBorders(img):
 
 borderedImg = addBorders(pcb2)
 
+def removeBorders(img):
+    h, w = np.shape(img)[:2]
+
+    B = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    left = w
+    right = 1
+    top = h
+    bottom = 1
+
+    for i in range (1, h):
+        for j in range (1, w):
+            if B[i,j] > 0:
+
+                if i < top:
+                    top = i
+
+                if i > bottom:
+                    bottom = i
+
+                if j < left:
+                    left = j
+
+                if j > right:
+                    right = j
+
+    C = img[top:bottom, left:right]
+
+    return C
+
+
+
 def rotateImage(img):
     y, x = np.shape(img)[:2]
     cx = x/2
@@ -128,7 +160,37 @@ def rotateImage(img):
     return R
 
 R = rotateImage(borderedImg)
-print(np.shape(R)[:2])
 
-cv2.imshow('Result', R)
+def scaleImage(img1, img2):
+    # get shape of two images
+    # scale second image to the first
+    y1, x1 = np.shape(img1)[:2]
+    y2, x2 = np.shape(img2)[:2]
+
+    if x1 >= x2:
+        scaleW = x2/x1
+        w = x1 
+    else:
+        scaleW = x1/x2
+        w = x2
+
+    if y1 >= y2:
+        scaleH = y2/y1
+        h = y1
+    else:
+        scaleH = y1/y2
+        h = y2
+
+    S = cv2.resize(img2,(int(w*scaleW), int(h*scaleH)))
+
+    return S
+
+cropped = removeBorders(R)
+Result = scaleImage(pcb1, cropped)
+
+cv2.imshow('Result', Result)
+# cv2.imshow('pcb1', pcb1)
+cv2.imshow('cropped', cropped)
+cv2.imwrite(outputPath + 'Result' + fileExtension, Result)
+# cv2.imwrite(outputPath + 'R' + fileExtension, R)
 cv2.waitKey(0)
