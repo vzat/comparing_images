@@ -42,11 +42,13 @@ def getMatches(img1, img2):
         currentMatch = {
             'pt1': {
                 'x': keyPoint1.pt[0],
-                'y': keyPoint1.pt[1]
+                'y': keyPoint1.pt[1],
+                'angle': keyPoint1.angle
             },
             'pt2': {
                 'x': keyPoint2.pt[0],
-                'y': keyPoint2.pt[1]
+                'y': keyPoint2.pt[1],
+                'angle': keyPoint2.angle
             }
         }
 
@@ -74,29 +76,30 @@ def getRotationAngle(matches):
     point2BX = matches[1]['pt2']['x']
     point2BY = matches[1]['pt2']['y']
 
-    m1 = ((point1BY - point1AY) / (point1BX - point1AX))
-    line1Angle = math.atan(m1)
+    angle1 = matches[0]['pt1']['angle']
+    angle2 = matches[0]['pt2']['angle']
 
-    m2 = ((point2BY - point2AY) / (point2BX - point2AX))
-    line2Angle = math.atan(m2)
-    
-    rotationAngle = line2Angle - line1Angle
+    # m1 = ((point1BY - point1AY) / (point1BX - point1AX))
+    # line1Angle = math.atan(m1)
+    #
+    # m2 = ((point2BY - point2AY) / (point2BX - point2AX))
+    # line2Angle = math.atan(m2)
+    #
+    # rotationAngle = line2Angle - line1Angle
+    #
+    # rotationAngle = np.rad2deg(rotationAngle)
 
-    rotationAngle = np.rad2deg(rotationAngle)
-
-    return(rotationAngle)
+    return angle2 - angle1
 
 
 rotationAngle = getRotationAngle(matches)
 
-
-
-# print(rotationAngle)
+print(rotationAngle)
 
 
 def getDiameter(img):
     h, w = np.shape(img)[:2]
-    hyp = (w*w + h*h)**(1/2)
+    hyp = (w*w + h*h)**(1/2.0)
     return(int(hyp)+1)
 
 def addBorders(img):
@@ -109,7 +112,7 @@ def addBorders(img):
 
     y2, x2 = np.shape(img)[:2]
     cx2 = x2/2
-    cy2 = y2/2 
+    cy2 = y2/2
 
     mask[int(cy-cy2):int(cy+cy2) , int(cx-cx2):int(cx+cx2)] = img[0:y2, 0:x2]
 
@@ -167,9 +170,14 @@ def scaleImage(img1, img2):
     y1, x1 = np.shape(img1)[:2]
     y2, x2 = np.shape(img2)[:2]
 
+    x1 = float(x1)
+    y1 = float(y1)
+    x2 = float(x2)
+    y2 = float(y2)
+
     if x1 >= x2:
         scaleW = x2/x1
-        w = x1 
+        w = x1
     else:
         scaleW = x1/x2
         w = x2
