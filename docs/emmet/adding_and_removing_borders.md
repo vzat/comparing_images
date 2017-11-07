@@ -28,7 +28,7 @@ The image is now free to rotate inside the window without anything getting clipp
 
 ## Getting the Diameter
 
-First we need to get the diameter of the image. As the image is a rectangle with a right angle, we can say that the height and width of the images are sides of a right-angled triangle which would make the diameter the hypotenuse. Thus, we can find the diameter using the Pythagorean Theorem.
+First we need to get the diameter of the image. As the image is a rectangle with a right angle, we can say that the height and width of the images are sides of a right-angled triangle which would make the diameter the hypotenuse. Thus, we can find the diameter using the Pythagorean Theorem[1].
 
 ```python
 def getDiameter(img):
@@ -43,7 +43,7 @@ Now that we can find the diameter, we can start our function to add borders to o
 
 ### Making the Background
 
-Instead of actually adding borders to the image in question, we will make a new image that is all black with the dimensions of the diameter and then paste the image on top. To make the all black image, we make use of NumPy's .zeroes() function. This makes an array with all elements set to zero (i.e. black). In the parameters, the diameter(hyp) is the width and height. The number 3 represents the number of channels. One for red, one for blue, one for green. 
+Instead of actually adding borders to the image in question, we will make a new image that is all black with the dimensions of the diameter and then paste the image on top. To make the all black image, we make use of NumPy's .zeroes()[2] function. This makes an array with all elements set to zero (i.e. black). In the parameters, the diameter(hyp) is the width and height. The number 3 represents the number of channels. One for red, one for blue, one for green. 
 
 ```python
 hyp = getDiameter(img)
@@ -96,7 +96,7 @@ As you can see below, we have successfully added borders to the image that are b
 
 | Bordered PCB 2 | Rotated PCB 2 |
 | :---: | :---: |
-| <img src="../images/addBorder.jpg" width="300"> | <img src="../images/rotateBordered.jpg" width="300"> | 
+| <img src="../images/addBorders.jpg" width="300"> | <img src="../images/rotateBordered.jpg" width="300"> | 
 
 
 
@@ -207,3 +207,7 @@ Below, we can see the rotated PCB2 image with its borders removed in comparison 
 | <img src="../images/pcb1.jpg" width="300"> | <img src="../images/removeBorders.jpg" width="300"> | 
 
 ## References
+
+[1] 'The Pythagorean Theorem', [Online]. Available: http://www.montereyinstitute.org/courses/DevelopmentalMath/COURSE_TEXT2_RESOURCE/U07_L1_T4_text_final.html. [Accessed: 2017-7-6]
+
+[2] 'numpy.zeroes', [Online]. Available: https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.zeros.html. [Accessed: 2017-7-6]

@@ -14,7 +14,7 @@ Before we rotate, we need to figure out the angle of rotation. Let's explore tha
 
 ### getMatches()
 
-We will start by defining a Python function getRotationAngle() which takes one parameter, matches. This parameter should be the matches dictionary returned in the getMatches function defined by Vlad. 
+We will start by defining a Python function getRotationAngle() which takes one parameter, matches. This parameter should be the matches dictionary returned in the getMatches function defined by Vlad[1]. 
 
 ```python
 def getMatches(img1, img2):
@@ -69,7 +69,7 @@ point2BY = matches[1]['pt2']['y']
 
 ### Getting the Slope
 
-Next, we will use these points to calculate the slope between the matches for both images. We do this using the mathematic formula for calculating slope.
+Next, we will use these points to calculate the slope between the matches for both images. We do this using the mathematic formula for calculating slope[2].
 
 ```python
 m1 = ((point1BY - point1AY) / (point1BX - point1AX))
@@ -80,7 +80,7 @@ m2 = ((point2BY - point2AY) / (point2BX - point2AX))
 
 ### Finding the Angle
 
-Next, using the Atan function from the Math library, we can get the angle of each line compared to a common origin. Finally, we take the angle of Line 1 away from Line 2 to get the angle of rotation that we need. Before returning it, we convert it from radians to degrees.
+Next, using the Atan function from the Math library[3], we can get the angle of each line compared to a common origin. Finally, we take the angle of Line 1 away from Line 2 to get the angle of rotation that we need. Before returning it, we convert it from radians to degrees.
 
 ```python
 line1Angle = math.atan(m1)
@@ -162,3 +162,8 @@ The rotation works great. However, the dimensions of PCB2 have remained the same
 
 ## References
 
+[1] Vlad Zat, 'Comparing Descriptor Matching Algorithms and Options', 2017, [Online]. Available: https://vzat.github.io/comparing_images/week5.html. [Accessed: 2017-7-2]
+
+[2] 'Calculating the Slope', [Online]. Available: http://cls.syr.edu/mathtuneup/grapha/Unit4/Unit4a.html. [Accessed: 2017-7-2]
+
+[3] 'Trigonometric functions', [Online]. Available: https://docs.python.org/2/library/math.html#trigonometric-functions
