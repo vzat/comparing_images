@@ -6,7 +6,7 @@ The following blog will explore a solution to this problem by testing the progra
 
 | PCB1 | PCB2 |
 | :---: | :---: |
-| <img src="../images/pcb1.jpg" width="300"> | <img src="../images/pcb2rotated.jpg" width="300"> |
+| <img src="../images/pcb1.jpg" width="300"> | <img src="../images/pcb2rotated2.jpg" width="300"> |
 
 ## Finding the Rotation Angle
 
