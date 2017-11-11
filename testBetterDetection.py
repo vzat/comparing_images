@@ -72,14 +72,29 @@ def getMask(img1, img2):
     for dif in img1Dif:
         mask[int(dif['y']), int(dif['x'])] = 255
 
+    # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    # _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # noComp = len(contours)
+    # for i in range(100):
+    #     mask = cv2.dilate(mask, shape)
+    #     _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     curComp = len(contours)
+    #     if curComp < noComp * 50 / 100:
+    #         break
+    #
+    # noComp = curComp
+    # for i in range(100):
+    #     mask = cv2.erode(mask, shape)
+    #     _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     curComp = len(contours)
+    #     print curComp
+    #     if curComp > noComp + noComp * 10 / 100:
+    #         break
 
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     mask = cv2.dilate(mask, shape, iterations = 10)
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     mask = cv2.erode(mask, shape, iterations = 20)
-
-    cv2.imshow('mask', mask)
-    cv2.waitKey(0)
 
     # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
     # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
