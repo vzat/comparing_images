@@ -172,10 +172,27 @@ def getMatches(img1, img2):
     return matchedCoordinates
 
 def getRotationAngle(matches):
+    # avgAngle = 0
+    #
+    # if len(matches) < 5:
+    #     noMatches = len(matches)
+    # else:
+    #     noMatches = 5
+    #
+    # for matchNo in range(noMatches):
+    #     angle1 = matches[matchNo]['pt1']['angle']
+    #     angle2 = matches[matchNo]['pt2']['angle']
+    #
+    #     avgAngle += (angle2 - angle1)
+    #
+    # avgAngle /= noMatches
+
     angle1 = matches[0]['pt1']['angle']
     angle2 = matches[0]['pt2']['angle']
 
     return angle2 - angle1
+
+    # return avgAngle
 
 def getDiameter(img):
     h, w = np.shape(img)[:2]
@@ -228,7 +245,7 @@ def removeBorders(img):
 
     return C
 
-def rotateImage(img):
+def rotateImage(img, rotationAngle):
     y, x = np.shape(img)[:2]
     cx = x/2
     cy = y/2
@@ -267,6 +284,29 @@ def scaleImage(img1, img2):
 
     return S
 
+def locationCorrection(img1, img2):
+    height, width = np.shape(img2)[:2]
+
+    gImg1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    gImg2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    # gImg1 = cv2.medianBlur(gImg1, 9)
+    # gImg2 = cv2.medianBlur(gImg2, 9)
+    #
+    # threshold, _ = cv2.threshold(src = gImg1, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    # gImg1 = cv2.Canny(image = gImg1, threshold1 = 0.5 * threshold, threshold2 = threshold)
+    #
+    # threshold, _ = cv2.threshold(src = gImg2, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    # gImg2 = cv2.Canny(image = gImg2, threshold1 = 0.5 * threshold, threshold2 = threshold)
+
+    # Convert frames to CV_32FC1
+    gImg1_32 = np.float32(gImg1)
+    gImg2_32 = np.float32(gImg2)
+
+    # Find the translation between the two frames
+    (xDif, yDif), _ = cv2.phaseCorrelate(src1 = gImg1_32, src2 = gImg2_32)
+
+    translationMatrix = np.float32([[1, 0, xDif], [0, 1, yDif]])
+    return cv2.warpAffine(img2, translationMatrix, (width, height))
 
 
 imagesPath = 'images/'
@@ -279,15 +319,17 @@ pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 normPCB1 = normaliseImg(pcb1)
 normPCB2 = normaliseImg(pcb2)
 
+cv2.imwrite(outputPath + 'normPCB1' + fileExtension, normPCB1)
+cv2.imwrite(outputPath + 'normPCB2' + fileExtension, normPCB2)
+
 
 
 matches = getMatches(normPCB1, normPCB2)
 rotationAngle = getRotationAngle(matches)
 borderedImg = addBorders(normPCB2)
-R = rotateImage(borderedImg)
+R = rotateImage(borderedImg, rotationAngle)
 cropped = removeBorders(R)
 normPCB2 = scaleImage(normPCB1, cropped)
-
 
 
 mask = getMask(normPCB1, normPCB2)
@@ -304,7 +346,7 @@ for (x, y, w, h) in bestPatches:
     cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
 cv2.imshow('Differences', pcb1)
-
+cv2.imwrite(outputPath + 'newDifferences' + fileExtension, pcb1)
 
 # cv2.imshow('PCB1', normPCB1)
 # cv2.imshow('PCB2', normPCB2)
