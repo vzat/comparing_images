@@ -72,6 +72,23 @@ def getMask(img1, img2):
     for dif in img1Dif:
         mask[int(dif['y']), int(dif['x'])] = 255
 
+    # maxTh = 50
+    # _, contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # initContours = len(contours)
+    # for th in range(maxTh):
+    #     newMask = mask.copy()
+    #     for dif1 in img1Dif:
+    #         for dif2 in img1Dif:
+    #             if getDistance(dif1['x'], dif1['y'], dif2['x'], dif2['y']) < th:
+    #                 cv2.line(newMask, (int(dif1['x']), int(dif1['y'])), (int(dif2['x']), int(dif2['y'])), 255)
+    #
+    #     _, contours, _ = cv2.findContours(newMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     print len(contours)
+    #     cv2.imshow('NewMask', newMask)
+    #     cv2.waitKey(0)
+
+    mask = newMask.copy()
+
     # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     # _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # noComp = len(contours)
@@ -91,10 +108,10 @@ def getMask(img1, img2):
     #     if curComp > noComp + noComp * 10 / 100:
     #         break
 
-    shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    mask = cv2.dilate(mask, shape, iterations = 10)
-    shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    mask = cv2.erode(mask, shape, iterations = 20)
+    # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    # mask = cv2.dilate(mask, shape, iterations = 10)
+    # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    # mask = cv2.erode(mask, shape, iterations = 20)
 
     # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
     # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
@@ -186,6 +203,13 @@ def getRotationAngle(matches):
     #     avgAngle += (angle2 - angle1)
     #
     # avgAngle /= noMatches
+
+    # for match in matches:
+    #     angle1 = match['pt1']['angle']
+    #     angle2 = match['pt2']['angle']
+    #
+    #     print angle2 - angle1
+
 
     angle1 = matches[0]['pt1']['angle']
     angle2 = matches[0]['pt2']['angle']
@@ -308,6 +332,22 @@ def locationCorrection(img1, img2):
     translationMatrix = np.float32([[1, 0, xDif], [0, 1, yDif]])
     return cv2.warpAffine(img2, translationMatrix, (width, height))
 
+def transImgs(img1, img2, matches):
+    (height, width) = img2.shape[:2]
+
+    img1X = matches[0]['pt1']['x']
+    img1Y = matches[0]['pt1']['y']
+    img2X = matches[0]['pt2']['x']
+    img2Y = matches[0]['pt2']['y']
+
+    difX = img1X - img2X
+    difY = img1Y - img2Y
+
+    translationMatrix = np.float32([[1, 0, difX], [0, 1, difY]])
+    transImg = cv2.warpAffine(img2, translationMatrix, (width, height))
+
+    # cv2.imshow('Translated', transImg)
+    # cv2.waitKey(0)
 
 imagesPath = 'images/'
 outputPath = 'output/'
@@ -319,8 +359,8 @@ pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 normPCB1 = normaliseImg(pcb1)
 normPCB2 = normaliseImg(pcb2)
 
-cv2.imwrite(outputPath + 'normPCB1' + fileExtension, normPCB1)
-cv2.imwrite(outputPath + 'normPCB2' + fileExtension, normPCB2)
+# cv2.imwrite(outputPath + 'normPCB1' + fileExtension, normPCB1)
+# cv2.imwrite(outputPath + 'normPCB2' + fileExtension, normPCB2)
 
 
 
@@ -331,22 +371,20 @@ R = rotateImage(borderedImg, rotationAngle)
 cropped = removeBorders(R)
 normPCB2 = scaleImage(normPCB1, cropped)
 
+transImgs(normPCB1, normPCB2, matches)
+
 
 mask = getMask(normPCB1, normPCB2)
 patches = getAllPatches(mask)
 
-
-
-
-
-# bestPatches = getBestPatches(normPCB1, normPCB2, patches, 0.9)
-bestPatches = getBestPatchesAuto(normPCB1, normPCB2, patches)
+bestPatches = getBestPatches(normPCB1, normPCB2, patches, 0.9)
+# bestPatches = getBestPatchesAuto(normPCB1, normPCB2, patches)
 
 for (x, y, w, h) in bestPatches:
     cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
 cv2.imshow('Differences', pcb1)
-cv2.imwrite(outputPath + 'newDifferences' + fileExtension, pcb1)
+# cv2.imwrite(outputPath + 'newDifferences' + fileExtension, pcb1)
 
 # cv2.imshow('PCB1', normPCB1)
 # cv2.imshow('PCB2', normPCB2)
