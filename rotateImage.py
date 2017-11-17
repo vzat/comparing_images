@@ -3,14 +3,17 @@
 import numpy as np
 import cv2
 import easygui
-import math
+from math import atan
 
 imagesPath = 'images/'
 outputPath = 'output/'
 fileExtension = '.jpg'
 
-pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
-pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
+print("here")
+
+pcb1 = cv2.imread(imagesPath + 'fakePCB3.jpg')
+pcb2 = cv2.imread(imagesPath + 'fakePCB4.jpg')
+
 
 # Calculate Euclidean Distance between 2 points
 def getDistance(x1, y1, x2, y2):
@@ -26,6 +29,7 @@ def getDistance(x1, y1, x2, y2):
 #       -> x
 #       -> y
 def getMatches(img1, img2):
+    print("in getMatches")
     akaze = cv2.AKAZE_create()
     kp1, desc1 = akaze.detectAndCompute(img1, None)
     kp2, desc2 = akaze.detectAndCompute(img2, None)
@@ -66,6 +70,7 @@ matches = getMatches(pcb1, pcb2)
 
 
 def getRotationAngle(matches):
+    print("in getRotationAngle")
     point1AX = matches[0]['pt1']['x']
     point1AY = matches[0]['pt1']['y']
     point2AX = matches[0]['pt2']['x']
@@ -76,8 +81,8 @@ def getRotationAngle(matches):
     point2BX = matches[1]['pt2']['x']
     point2BY = matches[1]['pt2']['y']
 
-    angle1 = matches[0]['pt1']['angle']
-    angle2 = matches[0]['pt2']['angle']
+    # angle1 = matches[0]['pt1']['angle']
+    # angle2 = matches[0]['pt2']['angle']
 
     # m1 = ((point1BY - point1AY) / (point1BX - point1AX))
     # line1Angle = math.atan(m1)
@@ -89,12 +94,27 @@ def getRotationAngle(matches):
     #
     # rotationAngle = np.rad2deg(rotationAngle)
 
-    return angle2 - angle1
+    # return angle2 - angle1
+
+    m1 = ((point1BY - point1AY) / (point1BX - point1AX))
+    line1Angle = atan(m1)
+
+    m2 = ((point2BY - point2AY) / (point2BX - point2AX))
+    line2Angle = atan(m2)
+    
+    rotationAngle = (line2Angle - line1Angle)
+
+    rotationAngle = np.rad2deg(rotationAngle)
+    print(rotationAngle)
+
+    return(rotationAngle)
+
+
 
 
 rotationAngle = getRotationAngle(matches)
 
-print(rotationAngle)
+# print(rotationAngle)
 
 
 def getDiameter(img):
@@ -164,41 +184,21 @@ def rotateImage(img):
 
 R = rotateImage(borderedImg)
 
-def scaleImage(img1, img2):
-    # get shape of two images
-    # scale second image to the first
-    y1, x1 = np.shape(img1)[:2]
-    y2, x2 = np.shape(img2)[:2]
-
-    x1 = float(x1)
-    y1 = float(y1)
-    x2 = float(x2)
-    y2 = float(y2)
-
-    if x1 >= x2:
-        scaleW = x2/x1
-        w = x1
-    else:
-        scaleW = x1/x2
-        w = x2
-
-    if y1 >= y2:
-        scaleH = y2/y1
-        h = y1
-    else:
-        scaleH = y1/y2
-        h = y2
-
-    S = cv2.resize(img2,(int(w*scaleW), int(h*scaleH)))
-
-    return S
-
 cropped = removeBorders(R)
-Result = scaleImage(pcb1, cropped)
+# Result = scaleImage(pcb1, cropped)
 
-cv2.imshow('Result', Result)
+h, w = np.shape(cropped)[:2]
+h1, w1 = np.shape(pcb2)[:2]
+h2, w2 = np.shape(pcb1)[:2]
+
+cropped = cv2.resize(cropped, (int(w*0.25), int(h*0.25)))
+pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
+pcb1 = cv2.resize(pcb1, (int(w2*0.25), int(h2*0.25)))
+
+# cv2.imshow('original', pcb2)
 # cv2.imshow('pcb1', pcb1)
-cv2.imshow('cropped', cropped)
-cv2.imwrite(outputPath + 'addBorders' + fileExtension, borderedImg)
+# # cv2.imshow('pcb1', pcb1)
+cv2.imshow('rotated', cropped)
+# cv2.imwrite(outputPath + 'addBorders' + fileExtension, borderedImg)
 # cv2.imwrite(outputPath + 'R' + fileExtension, R)
 cv2.waitKey(0)
