@@ -9,10 +9,8 @@ imagesPath = 'images/'
 outputPath = 'output/'
 fileExtension = '.jpg'
 
-print("here")
-
-pcb1 = cv2.imread(imagesPath + 'fakePCB3.jpg')
-pcb2 = cv2.imread(imagesPath + 'fakePCB4.jpg')
+pcb1 = cv2.imread(imagesPath + 'pcb1' + fileExtension)
+pcb2 = cv2.imread(imagesPath + 'pcb2' + fileExtension)
 
 
 # Calculate Euclidean Distance between 2 points
@@ -29,7 +27,6 @@ def getDistance(x1, y1, x2, y2):
 #       -> x
 #       -> y
 def getMatches(img1, img2):
-    print("in getMatches")
     akaze = cv2.AKAZE_create()
     kp1, desc1 = akaze.detectAndCompute(img1, None)
     kp2, desc2 = akaze.detectAndCompute(img2, None)
@@ -60,7 +57,7 @@ def getMatches(img1, img2):
 
     return matchedCoordinates
 
-matches = getMatches(pcb1, pcb2)
+# matches = getMatches(pcb1, pcb2)
 
 
 # Use the matches list to find the orientation of the second image
@@ -69,8 +66,8 @@ matches = getMatches(pcb1, pcb2)
 # to get the x coordinate from the first image
 
 
-def getRotationAngle(matches):
-    print("in getRotationAngle")
+def getRotationAngle(img1, img2):
+    matches = getMatches(img1, img2)
     point1AX = matches[0]['pt1']['x']
     point1AY = matches[0]['pt1']['y']
     point2AX = matches[0]['pt2']['x']
@@ -114,7 +111,7 @@ def getRotationAngle(matches):
     # print np.rad2deg(angle1 - angle2)
     angle = angle1 - angle2
 
-    print np.rad2deg(angle)
+    print (np.rad2deg(angle))
 
 
     m1 = ((point1BY - point1AY) / (point1BX - point1AX))
@@ -133,7 +130,7 @@ def getRotationAngle(matches):
 
 
 
-rotationAngle = getRotationAngle(matches)
+rotationAngle = getRotationAngle(pcb1, pcb2)
 
 # print(rotationAngle)
 
@@ -193,7 +190,7 @@ def removeBorders(img):
 
 
 
-def rotateImage(img):
+def rotateImage(img, rotationAngle):
     y, x = np.shape(img)[:2]
     cx = x/2
     cy = y/2
@@ -203,18 +200,40 @@ def rotateImage(img):
 
     return R
 
-R = rotateImage(borderedImg)
+R = rotateImage(borderedImg, rotationAngle)
+
+def checkRotation(img1, img2):
+    matches = getMatches(img1, img2)
+
+    point1AX = matches[0]['pt1']['x']
+    point2AX = matches[0]['pt2']['x']
+
+    point1BX = matches[1]['pt1']['x']
+    point2BX = matches[1]['pt2']['x']
+
+    if(point1AX < point1BX and point2AX > point2BX):
+        return False
+    elif(point1AX > point1BX and point2AX < point2BX):
+        return False
+    else:
+        return True
+
+if(checkRotation(pcb1, R) == False):
+    R = rotateImage(R, 180)
+    print("re-rotated image")
+
+
 
 cropped = removeBorders(R)
 # Result = scaleImage(pcb1, cropped)
 
-h, w = np.shape(cropped)[:2]
-h1, w1 = np.shape(pcb2)[:2]
-h2, w2 = np.shape(pcb1)[:2]
+# h, w = np.shape(cropped)[:2]
+# h1, w1 = np.shape(pcb2)[:2]
+# h2, w2 = np.shape(pcb1)[:2]
 
-cropped = cv2.resize(cropped, (int(w*0.25), int(h*0.25)))
-pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
-pcb1 = cv2.resize(pcb1, (int(w2*0.25), int(h2*0.25)))
+# cropped = cv2.resize(cropped, (int(w*0.25), int(h*0.25)))
+# pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
+# pcb1 = cv2.resize(pcb1, (int(w2*0.25), int(h2*0.25)))
 
 # cv2.imshow('original', pcb2)
 # cv2.imshow('pcb1', pcb1)
