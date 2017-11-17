@@ -96,12 +96,33 @@ def getRotationAngle(matches):
 
     # return angle2 - angle1
 
+    # angle1A = np.pi + np.arctan2(-point1AY, point1AX)
+    # angle2A = np.pi + np.arctan2(-point2AY, point2AX)
+    # angle1 = angle1A - angle2A
+    #
+    # angle1B = np.pi + np.arctan2(-point1BY, point1BX)
+    # angle2B = np.pi + np.arctan2(-point2BY, point2BX)
+    # angle2 = angle1B - angle2B
+
+    # angle1 = np.pi + np.arctan2(point1AY - point2AY, point1AX - point2AX)
+    # angle2 = np.pi + np.arctan2(point1BY - point2BY, point1BX - point2BX)
+
+    angle1 = -np.arctan2(point1AY, point1AX) - np.arctan2(point2AY, point2AX)
+    angle2 = -np.arctan2(point1BY, point1BX) - np.arctan2(point2BY, point2BX)
+
+    # print 'New Angle'
+    # print np.rad2deg(angle1 - angle2)
+    angle = angle1 - angle2
+
+    print np.rad2deg(angle)
+
+
     m1 = ((point1BY - point1AY) / (point1BX - point1AX))
     line1Angle = atan(m1)
 
     m2 = ((point2BY - point2AY) / (point2BX - point2AX))
     line2Angle = atan(m2)
-    
+
     rotationAngle = (line2Angle - line1Angle)
 
     rotationAngle = np.rad2deg(rotationAngle)
