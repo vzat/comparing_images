@@ -141,5 +141,13 @@ def cleanPatch(img2, patch):
             print value
 ```
 
+The following image contains the differences found when using template matching
+on sections of the patch. The black bordered squares are the sections which
+were found to be different.
+
+| Differences |
+| :---: | :---: |
+| <img src="images/cleanPatch.jpg" width="300"> |
+
 ## References
 [1] R.Szeliski, 'Feature-based alignment' in 'Computer Vision: Algorithms and Applications', 2010, Springer, p. 312

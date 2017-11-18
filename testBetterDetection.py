@@ -401,6 +401,7 @@ def cleanPatch(img2, patch):
 
             print value
 
+    cv2.imwrite(outputPath + 'cleanPatch' + fileExtension, oPatch)
     # cv2.imshow('Original Patch', oPatch)
     # cv2.waitKey(0)
 
