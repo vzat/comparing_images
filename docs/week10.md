@@ -146,7 +146,7 @@ on sections of the patch. The black bordered squares are the sections which
 were found to be different.
 
 | Differences |
-| :---: | :---: |
+| :---: |
 | <img src="images/cleanPatch.jpg" width="300"> |
 
 ## References
