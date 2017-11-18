@@ -142,8 +142,4 @@ def cleanPatch(img2, patch):
 ```
 
 ## References
-[1] R.Szeliski, 'Feature-based alignment' in 'Computer Vision: Algorithms and Applications',
-2010, Springer, p. 312
-
-
-* experiments: blurring, eliminating incorrect parts of patches
+[1] R.Szeliski, 'Feature-based alignment' in 'Computer Vision: Algorithms and Applications', 2010, Springer, p. 312
