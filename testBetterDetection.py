@@ -3,7 +3,7 @@ import cv2
 
 def normaliseImg(img):
     height, width = np.shape(img)[:2]
-    clahe = cv2.createCLAHE(clipLimit = 4, tileGridSize = (height, width))
+    clahe = cv2.createCLAHE(clipLimit = 4, tileGridSize = (width, height))
 
     yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
     luminance = yuv[:, :, 0]
@@ -72,6 +72,23 @@ def getMask(img1, img2):
     for dif in img1Dif:
         mask[int(dif['y']), int(dif['x'])] = 255
 
+    # maxTh = 50
+    # _, contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # initContours = len(contours)
+    # for th in range(maxTh):
+    #     newMask = mask.copy()
+    #     for dif1 in img1Dif:
+    #         for dif2 in img1Dif:
+    #             if getDistance(dif1['x'], dif1['y'], dif2['x'], dif2['y']) < th:
+    #                 cv2.line(newMask, (int(dif1['x']), int(dif1['y'])), (int(dif2['x']), int(dif2['y'])), 255)
+    #
+    #     _, contours, _ = cv2.findContours(newMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     print len(contours)
+    #     cv2.imshow('NewMask', newMask)
+    #     cv2.waitKey(0)
+
+    # mask = newMask.copy()
+
     # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     # _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # noComp = len(contours)
@@ -94,7 +111,31 @@ def getMask(img1, img2):
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     mask = cv2.dilate(mask, shape, iterations = 10)
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    mask = cv2.erode(mask, shape, iterations = 20)
+    mask = cv2.erode(mask, shape, iterations = 22)
+
+    cv2.imshow('Mask', mask)
+    cv2.waitKey(0)
+
+
+    # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    # _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # noComp = len(contours)
+    # for i in range(100):
+    #     mask = cv2.dilate(mask, shape)
+    #     _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     curComp = len(contours)
+    #     if curComp < noComp * 50 / 100:
+    #         break
+    #
+    # noComp = curComp
+    # for i in range(100):
+    #     mask = cv2.erode(mask, shape)
+    #     _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     curComp = len(contours)
+    #     print curComp
+    #     if curComp > noComp * 105 / 100:
+    #         break
+
 
     # shape = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
     # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, shape)
@@ -187,6 +228,13 @@ def getRotationAngle(matches):
     #
     # avgAngle /= noMatches
 
+    # for match in matches:
+    #     angle1 = match['pt1']['angle']
+    #     angle2 = match['pt2']['angle']
+    #
+    #     print angle2 - angle1
+
+
     angle1 = matches[0]['pt1']['angle']
     angle2 = matches[0]['pt2']['angle']
 
@@ -211,7 +259,11 @@ def addBorders(img):
     cx2 = x2/2
     cy2 = y2/2
 
-    mask[int(cy-cy2):int(cy+cy2) , int(cx-cx2):int(cx+cx2)] = img[0:y2, 0:x2]
+    # Fix for odd sized images
+    offsetX = x2 % 2
+    offsetY = y2 % 2
+
+    mask[int(cy-cy2):int(cy+cy2 + offsetY) , int(cx-cx2):int(cx+cx2+offsetY)] = img[0:y2, 0:x2]
 
     return(mask)
 
@@ -255,34 +307,34 @@ def rotateImage(img, rotationAngle):
 
     return R
 
-def scaleImage(img1, img2):
-    # get shape of two images
-    # scale second image to the first
-    y1, x1 = np.shape(img1)[:2]
-    y2, x2 = np.shape(img2)[:2]
-
-    x1 = float(x1)
-    y1 = float(y1)
-    x2 = float(x2)
-    y2 = float(y2)
-
-    if x1 >= x2:
-        scaleW = x2/x1
-        w = x1
-    else:
-        scaleW = x1/x2
-        w = x2
-
-    if y1 >= y2:
-        scaleH = y2/y1
-        h = y1
-    else:
-        scaleH = y1/y2
-        h = y2
-
-    S = cv2.resize(img2,(int(w*scaleW), int(h*scaleH)))
-
-    return S
+# def scaleImage(img1, img2):
+#     # get shape of two images
+#     # scale second image to the first
+#     y1, x1 = np.shape(img1)[:2]
+#     y2, x2 = np.shape(img2)[:2]
+#
+#     x1 = float(x1)
+#     y1 = float(y1)
+#     x2 = float(x2)
+#     y2 = float(y2)
+#
+#     if x1 >= x2:
+#         scaleW = x2/x1
+#         w = x1
+#     else:
+#         scaleW = x1/x2
+#         w = x2
+#
+#     if y1 >= y2:
+#         scaleH = y2/y1
+#         h = y1
+#     else:
+#         scaleH = y1/y2
+#         h = y2
+#
+#     S = cv2.resize(img2,(int(w*scaleW), int(h*scaleH)))
+#
+#     return S
 
 def locationCorrection(img1, img2):
     height, width = np.shape(img2)[:2]
@@ -308,6 +360,119 @@ def locationCorrection(img1, img2):
     translationMatrix = np.float32([[1, 0, xDif], [0, 1, yDif]])
     return cv2.warpAffine(img2, translationMatrix, (width, height))
 
+def transImgs(img1, img2):
+    (height, width) = img2.shape[:2]
+    matches = getMatches(img1, img2)
+
+    img1X = matches[0]['pt1']['x']
+    img1Y = matches[0]['pt1']['y']
+    img2X = matches[0]['pt2']['x']
+    img2Y = matches[0]['pt2']['y']
+
+    difX = img1X - img2X
+    difY = img1Y - img2Y
+
+    translationMatrix = np.float32([[1, 0, difX], [0, 1, difY]])
+    transImg = cv2.warpAffine(img2, translationMatrix, (width, height))
+
+    return (img1, transImg)
+
+    # cv2.imshow('Translated', transImg)
+    # cv2.waitKey(0)
+
+def cleanPatch(img2, patch):
+    pHeight, pWidth = patch.shape[:2]
+    oPatch = patch.copy()
+
+    (sHeight, sWidth) = (25, 25)
+    if pHeight > sHeight and pWidth > sWidth:
+        sX = sY = 0
+        while (sY + sHeight < pHeight):
+            sPatch = patch[sY : sY + sHeight, sX : sX + sWidth]
+            (_, value) = getBestMatch(img2, sPatch)
+
+            if value < 0.25:
+                cv2.rectangle(oPatch, (sX, sY), (sX + sWidth, sY + sHeight), (0, 0, 0), 1)
+
+            sX += sWidth
+            if sX + sWidth > pWidth:
+                sX = 0
+                sY += sHeight
+
+            print value
+
+    cv2.imwrite(outputPath + 'cleanPatch' + fileExtension, oPatch)
+    # cv2.imshow('Original Patch', oPatch)
+    # cv2.waitKey(0)
+
+def getScalingLevel(matches):
+    # get (X,Y) for each point in top 2 matches
+    point1AX = matches[0]['pt1']['x']
+    point1AY = matches[0]['pt1']['y']
+    point2AX = matches[0]['pt2']['x']
+    point2AY = matches[0]['pt2']['y']
+
+    point1BX = matches[1]['pt1']['x']
+    point1BY = matches[1]['pt1']['y']
+    point2BX = matches[1]['pt2']['x']
+    point2BY = matches[1]['pt2']['y']
+
+    # get distance between the top two matches
+    dist1 = getDistance(point1AX, point1AY, point1BX, point1BY)
+    dist2 = getDistance(point2AX, point2AY, point2BX, point2BY)
+
+    # return smaller distance divided by larger distance
+    if(dist1 < dist2):
+        return ((dist1 / dist2), 0)
+    else:
+        return ((dist2 / dist1), 1)
+
+
+def scaleImage(img1, img2):
+    matches = getMatches(img1, img2)
+    scalingLevel, i = getScalingLevel(matches)
+
+    # find image to scale
+    if(i == 0):
+        img = img2
+    else:
+        img = img1
+
+    # get height and witdh of image
+    h, w = np.shape(img)[:2]
+    print(w, h)
+
+    w = float(w)
+    h = float(h)
+
+    # resize to scalingLevel
+    S = cv2.resize(img,(int(w*scalingLevel), int(h*scalingLevel)))
+
+    if(i == 0):
+        return (img1, S)
+    else:
+        return (S, img2)
+
+def scaleImagesDown(img1, img2):
+    # Scale the images down if they are too big
+
+    height1, width1 = img1.shape[:2]
+    height2, width2 = img2.shape[:2]
+
+    maxWidth = 1000.0
+    if width1 > maxWidth or width2 > maxWidth:
+        if width1 > maxWidth and width1 > width2:
+            scale = maxWidth / width1
+        else:
+            scale = maxWidth / width2
+
+        newImg1 = cv2.resize(img1, (int(width1 * scale), int(height2 * scale)), interpolation = cv2.INTER_AREA)
+        newImg2 = cv2.resize(img2, (int(width2 * scale), int(height2 * scale)), interpolation = cv2.INTER_AREA)
+    else:
+        newImg1 = img1.copy()
+        newImg2 = img2.copy()
+
+    return (newImg1, newImg2)
 
 imagesPath = 'images/'
 outputPath = 'output/'
@@ -316,37 +481,67 @@ fileExtension = '.jpg'
 pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
 pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
 
+(pcb1, pcb2) = scaleImagesDown(pcb1, pcb2)
+
+# height1, width1 = pcb1.shape[:2]
+# height2, width2 = pcb2.shape[:2]
+#
+# pcb1 = cv2.resize(pcb1, (int(width1 * 0.25), int(height1 * 0.25)))
+# pcb2 = cv2.resize(pcb2, (int(width2 * 0.25), int(height2 * 0.25)))
+
 normPCB1 = normaliseImg(pcb1)
 normPCB2 = normaliseImg(pcb2)
 
-cv2.imwrite(outputPath + 'normPCB1' + fileExtension, normPCB1)
-cv2.imwrite(outputPath + 'normPCB2' + fileExtension, normPCB2)
+# normPCB1 = cv2.GaussianBlur(normPCB1, (5, 5), 0)
+# normPCB2 = cv2.GaussianBlur(normPCB2, (5, 5), 0)
+
+
+# normPCB1 = cv2.fastNlMeansDenoisingColored(normPCB1, None, 3, 3, 7, 21)
+# normPCB2 = cv2.fastNlMeansDenoisingColored(normPCB2, None, 3, 3, 7, 21)
+#
+# normPCB1 = cv2.medianBlur(normPCB1, 3)
+# normPCB2 = cv2.medianBlur(normPCB2, 3)
+
+# cv2.imshow('1', normPCB1)
+# cv2.imshow('2', normPCB2)
+
+
+# cv2.imwrite(outputPath + 'normPCB1' + fileExtension, normPCB1)
+# cv2.imwrite(outputPath + 'normPCB2' + fileExtension, normPCB2)
 
 
 
-matches = getMatches(normPCB1, normPCB2)
-rotationAngle = getRotationAngle(matches)
-borderedImg = addBorders(normPCB2)
-R = rotateImage(borderedImg, rotationAngle)
-cropped = removeBorders(R)
-normPCB2 = scaleImage(normPCB1, cropped)
+# matches = getMatches(normPCB1, normPCB2)
+# rotationAngle = getRotationAngle(matches)
+# borderedImg = addBorders(normPCB2)
+# R = rotateImage(borderedImg, rotationAngle)
+# cropped = removeBorders(R)
+# normPCB2 = cropped.copy()
+# normPCB2 = scaleImage(normPCB1, cropped)
 
+(normPCB1, normPCB2) = scaleImage(normPCB1, normPCB2)
+
+(normPCB1, normPCB2) = transImgs(normPCB1, normPCB2)
+
+# cv2.imshow('dsaad', normPCB1)
+# cv2.imshow('dsaadaas', normPCB2)
+# cv2.waitKey(0)
 
 mask = getMask(normPCB1, normPCB2)
 patches = getAllPatches(mask)
 
-
-
-
-
 # bestPatches = getBestPatches(normPCB1, normPCB2, patches, 0.9)
 bestPatches = getBestPatchesAuto(normPCB1, normPCB2, patches)
+
+# pX, pY, pW, pH = bestPatches[0]
+# patch = normPCB1[pY : pY + pH, pX : pX + pW]
+# cleanPatch(normPCB2, patch)
 
 for (x, y, w, h) in bestPatches:
     cv2.rectangle(pcb1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
 cv2.imshow('Differences', pcb1)
-cv2.imwrite(outputPath + 'newDifferences' + fileExtension, pcb1)
+# cv2.imwrite(outputPath + 'newDifferences' + fileExtension, pcb1)
 
 # cv2.imshow('PCB1', normPCB1)
 # cv2.imshow('PCB2', normPCB2)
