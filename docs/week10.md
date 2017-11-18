@@ -14,7 +14,6 @@ casting a float to int when calculating the centre of an image. To fix the odd
 number of pixels problem, an offset was added to the values if the number of pixels
 was odd.
 
-### Code
 ```python
     y1, x1 = np.shape(mask)[:2]
     cx = x1/2
@@ -37,7 +36,6 @@ The CLAHE object required the `tileGridSize` parameter to be a tuple containing
 the width and height of the grid size. The original code had the values in the tuple
 the wrong way around.
 
-### Code
 ```python
 clahe = cv2.createCLAHE(clipLimit = 4, tileGridSize = (width, height))
 ```
@@ -59,7 +57,6 @@ A translation matrix has the following form:
 After the matrix was constructed, the `warpAffine()` function from OpenCV was used
 to apply it to one of the images.
 
-#### Code
 ```python
 def mapImgs(img1, img2):
     (height, width) = img2.shape[:2]
@@ -95,7 +92,6 @@ areas which are not different. A possible fix for this was to split the image in
 small zones, and then use template matching on each of them to see how different they are.
 Unfortunately, even parts which were different were found as being part of the other image.
 
-### Code
 ```python
 def cleanPatch(img2, patch):
     pHeight, pWidth = patch.shape[:2]
