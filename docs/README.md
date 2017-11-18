@@ -19,7 +19,8 @@ Comparing two images and spotting the differences
 
 [Week 9 - Improving the results](week9.md)
 
+[Week 10 - Bug fixing and improvements](week10.md)
+
 ## Emmet's Docs
 
 [Cleaning the Image](emmet/cleaning_the_image.md)
-
