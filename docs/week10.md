@@ -4,7 +4,7 @@ Bug fixing and improvements
 ## Introduction
 This blog post covers the improvements, experiments and bug fixes implemented
 in the last week. These enhancements and issues were discovered from testing
-the solution on other images by the team members.
+the solution on other images by the team.
 
 ## Bug Fixes
 One major bug found was causing the program to crash on images with an odd width
@@ -31,7 +31,7 @@ was odd.
 ```
 
 Another bug found by testing was the incorrect order of the parameters when creating
-an CLAHE object. More specifically, the order of the width and height was wrong.
+a CLAHE object. More specifically, the order of the width and height was wrong.
 The CLAHE object required the `tileGridSize` parameter to be a tuple containing
 the width and height of the grid size. The original code had the values in the tuple
 the wrong way around.
