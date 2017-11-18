@@ -52,6 +52,7 @@ the offset was found. After this, a translation matrix was formed using these va
 A translation matrix has the following form:
 
 | 1 0 tx |
+
 | 0 1 ty |
 
 After the matrix was constructed, the `warpAffine()` function from OpenCV was used
@@ -77,6 +78,31 @@ def mapImgs(img1, img2):
 ```
 
 ### Downscaling Images
+Another problem was discovered while testing other images. Large images can
+not only slow down the program, but can also impede the process of finding differences.
+To fix this problem, large images are downscaled before any processing is done on them.
+
+```python
+def scaleImagesDown(img1, img2):
+    # Scale the images down if they are too big
+    height1, width1 = img1.shape[:2]
+    height2, width2 = img2.shape[:2]
+
+    maxWidth = 1000.0
+    if width1 > maxWidth or width2 > maxWidth:
+        if width1 > maxWidth and width1 > width2:
+            scale = maxWidth / width1
+        else:
+            scale = maxWidth / width2
+
+        newImg1 = cv2.resize(img1, (int(width1 * scale), int(height2 * scale)), interpolation = cv2.INTER_AREA)
+        newImg2 = cv2.resize(img2, (int(width2 * scale), int(height2 * scale)), interpolation = cv2.INTER_AREA)
+    else:
+        newImg1 = img1.copy()
+        newImg2 = img2.copy()
+
+    return (newImg1, newImg2)
+```
 
 ## Experiments
 In the process of improving the project, several experiments were conducted.
@@ -114,7 +140,6 @@ def cleanPatch(img2, patch):
 
             print value
 ```
-
 
 ## References
 [1] R.Szeliski, 'Feature-based alignment' in 'Computer Vision: Algorithms and Applications',
