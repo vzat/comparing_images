@@ -335,8 +335,44 @@ def getMask2(img1, img2):
         else:
             break;
 
-    cv2.imshow('Mask', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('Mask', mask)
+    # cv2.waitKey(0)
+
+    return mask
+
+def getMask3(img1, img2):
+    img1Height, img1Width = img1.shape[:2]
+    (img1Dif, img2Dif) = getDifferences(img1, img2)
+
+    threshold = 1.0
+
+    for i in range(1, 100):
+        newDif = []
+        sumThreshold = 0
+        for dif in img1Dif:
+            x = int(dif['x'])
+            y = int(dif['y'])
+            patch = img1[y - i : y + i, x - i : x + i]
+            (_, value) = getBestMatch(img2, patch)
+            sumThreshold += value
+
+            if value < threshold:
+                newDif.append(dif)
+
+        threshold = sumThreshold / len(img1Dif)
+
+        img1Dif = newDif
+
+        print len(img1Dif), threshold
+
+        mask = np.zeros((img1Height, img1Width, 1), np.uint8)
+        mask[:, :] = 0
+        for dif in img1Dif:
+            mask[int(dif['y']), int(dif['x'])] = 255
+
+        cv2.imshow('Mask', mask)
+        cv2.waitKey(0)
+
 
 def getBestMatch(img, patch):
     patchSize = patch.shape
@@ -347,6 +383,42 @@ def getBestMatch(img, patch):
     (_, value, _, (x, y)) = cv2.minMaxLoc(result)
 
     return ((x, y), value)
+
+def getAllPatches(mask):
+    patches = []
+
+    _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_NONE)
+    for contour in contours:
+        arcPercentage = 0.01
+        epsilon = cv2.arcLength(curve = contour, closed = True) * arcPercentage
+        corners = cv2.approxPolyDP(curve = contour, epsilon = epsilon, closed = True)
+        x, y, w, h = cv2.boundingRect(points = corners)
+        currentArea = w * h
+
+        # Ignore points
+        if currentArea > 1:
+            patches.append((x, y, w, h))
+
+    return patches
+
+def getBestPatches(sourceImg, checkImg, patches, threshold = 0.5):
+    bestPatches = []
+    for (x, y, w, h) in patches:
+        patch = sourceImg[y : y + h, x : x + w]
+        ((mX, mY), matchValue) = getBestMatch(checkImg, patch)
+        if matchValue < threshold:
+            bestPatches.append((x, y, w, h))
+
+    return bestPatches
+
+def getBestPatchesAuto(sourceImg, checkImg, patches):
+    for th in range(100):
+        threshold = th / 100.0
+        bestPatches = getBestPatches(sourceImg, checkImg, patches, threshold)
+        if len(bestPatches) > 0:
+            return bestPatches
+    return bestPatches
+
 
 # TODO: Replace with easygui
 imagesPath = 'images/'
@@ -372,8 +444,17 @@ normImg2 = cv2.equalizeHist(gImg2)
 
 mask = getMask2(normImg1, normImg2)
 
-cv2.imshow('Mask', mask)
+patches = getAllPatches(mask)
 
-cv2.imshow('1', normImg1)
-cv2.imshow('2', normImg2)
+(normImg1, normImg2) = normaliseImages(gImg1, gImg2)
+# bestPatches = getBestPatches(normImg1, normImg2, patches, 0.9)
+bestPatches = getBestPatchesAuto(normImg1, normImg2, patches)
+
+for (x, y, w, h) in bestPatches:
+    cv2.rectangle(img1, (x, y), (x + w, y + h), (0, 0, 255), 3)
+
+cv2.imshow('Diffs', img1)
+
+# cv2.imshow('1', normImg1)
+# cv2.imshow('2', normImg2)
 cv2.waitKey(0)
