@@ -112,16 +112,6 @@ def getRotationAngle(img1, img2):
 
     rotationAngle = np.rad2deg(rotationAngle)
 
-    # angleDif = []
-    # for match in matches:
-    #     angle1 = match['pt1']['angle']
-    #     angle2 = match['pt2']['angle']
-    #     angleDif.append(angle2 - angle1)
-    #
-    # angleDif = sorted(angleDif)
-    # rotationAngle = np.average(angleDif)
-    # print rotationAngle
-
     return (rotationAngle)
 
 def removeBorders(img):
@@ -182,6 +172,16 @@ def checkRotation(img1, img2):
     else:
         return True
 
+def matchRotation(img1, img2):
+    borderedImg = addBorders(img2)
+    rotationAngle = getRotationAngle(img1, img2)
+    rotatedImage = rotateImage(borderedImg, rotationAngle)
+    if(checkRotation(img1, rotatedImage) == False):
+        rotatedImage = rotateImage(rotatedImage, 180)
+    croppedImage = removeBorders(rotatedImage)
+
+    return croppedImage
+
 
 def getDistance(x1, y1, x2, y2):
     return ((x1 - x2)**2 + (y1 - y2)**2)**(1/2.0)
@@ -232,13 +232,121 @@ def scaleImages(img1, img2):
     else:
         return (S, img2)
 
-def matchRotation(img1, img2):
-    borderedImg = addBorders(img2)
-    rotationAngle = getRotationAngle(img1, img2)
-    rotatedImage = rotateImage(borderedImg, rotationAngle)
-    if(checkRotation(img1, rotatedImage) == False):
-        rotatedImage = rotateImage(rotatedImage, 180)
-    rotatedImage2 = removeBorders(rotatedImage2)
+def locationCorrection(img1, img2):
+    (height, width) = img2.shape[:2]
+    matches = getMatches(img1, img2)
+
+    img1X = matches[0]['pt1']['x']
+    img1Y = matches[0]['pt1']['y']
+    img2X = matches[0]['pt2']['x']
+    img2Y = matches[0]['pt2']['y']
+
+    difX = img1X - img2X
+    difY = img1Y - img2Y
+
+    translationMatrix = np.float32([[1, 0, difX], [0, 1, difY]])
+    transImg = cv2.warpAffine(img2, translationMatrix, (width, height))
+
+    return transImg
+
+def getDifferences(img1, img2):
+    akaze = cv2.AKAZE_create()
+    kp1, desc1 = akaze.detectAndCompute(img1, None)
+    kp2, desc2 = akaze.detectAndCompute(img2, None)
+
+    bf = cv2.BFMatcher(normType = cv2.NORM_HAMMING, crossCheck = True)
+    matches = bf.match(desc1, desc2)
+
+    for match in matches:
+        kp1[match.queryIdx] = None
+        kp2[match.trainIdx] = None
+
+    differences1 = []
+    differences2 = []
+
+    for keyPoint in kp1:
+        if keyPoint != None:
+            currentKP = {
+                'x': keyPoint.pt[0],
+                'y': keyPoint.pt[1]
+            }
+            differences1.append(currentKP)
+
+    for keyPoint in kp2:
+        if keyPoint != None:
+            currentKP = {
+                'x': keyPoint.pt[0],
+                'y': keyPoint.pt[1]
+            }
+            differences2.append(currentKP)
+
+    return (differences1, differences2)
+
+def getMask(img1, img2):
+    img1Height, img1Width = img1.shape[:2]
+
+    (img1Dif, img2Dif) = getDifferences(img1, img2)
+    print len(img1Dif)
+
+    mask = np.zeros((img1Height, img1Width, 1), np.uint8)
+    mask[:, :] = 0
+    for dif in img1Dif:
+        mask[int(dif['y']), int(dif['x'])] = 255
+
+    shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    mask = cv2.dilate(mask, shape, iterations = 10)
+    shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    mask = cv2.erode(mask, shape, iterations = 18)
+
+    return mask
+
+def getMask2(img1, img2):
+    img1Height, img1Width = img1.shape[:2]
+
+    (img1Dif, img2Dif) = getDifferences(img1, img2)
+
+    mask = np.zeros((img1Height, img1Width, 1), np.uint8)
+    mask[:, :] = 0
+    for dif in img1Dif:
+        mask[int(dif['y']), int(dif['x'])] = 255
+
+    lastNoContours = len(img1Dif)
+
+    shape = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    mask = cv2.dilate(mask, shape)
+
+    for i in range(100):
+        _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
+
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(points = contour)
+
+            patch = img1[y : y + h, x : x + w]
+            (_, value) = getBestMatch(img2, patch)
+
+            if value > 0.5:
+                cv2.drawContours(mask, contour, -1, 0)
+            else:
+                cv2.drawContours(mask, contour, -1, 255, 3)
+
+        noContours = len(contours)
+        if abs(noContours - lastNoContours) > 1:
+            lastNoContours = noContours
+        else:
+            break;
+
+    cv2.imshow('Mask', mask)
+    cv2.waitKey(0)
+
+def getBestMatch(img, patch):
+    patchSize = patch.shape
+
+    # cv2.TM_CCOEFF_NORMED or cv2.TM_CCORR_NORMED
+    result = cv2.matchTemplate(image = img, templ = patch, method = cv2.TM_CCOEFF_NORMED)
+
+    (_, value, _, (x, y)) = cv2.minMaxLoc(result)
+
+    return ((x, y), value)
 
 # TODO: Replace with easygui
 imagesPath = 'images/'
@@ -251,25 +359,21 @@ img1 = cv2.imread(file1)
 img2 = cv2.imread(file2)
 (img1, img2) = downscaleImages(img1, img2)
 
-
-normImg1 = img1.copy()
-normImg2 = img2.copy()
-
-
-borderedImg2 = addBorders(normImg2)
-rotationAngle = getRotationAngle(normImg1, normImg2)
-rotatedImage2 = rotateImage(borderedImg2, rotationAngle)
-if(checkRotation(normImg1, rotatedImage2) == False):
-    rotatedImage2 = rotateImage(rotatedImage2, 180)
-rotatedImage2 = removeBorders(rotatedImage2)
-
-(normImg1, normImg2) = scaleImages(normImg1, normImg2)
+img2 = matchRotation(img1, img2)
+(img1, img2) = scaleImages(img1, img2)
+img2 = locationCorrection(img1, img2)
 
 gImg1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 gImg2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-(normImg1, normImg2) = normaliseImages(gImg1, gImg2)
+# (normImg1, normImg2) = normaliseImages(gImg1, gImg2)
 
+normImg1 = cv2.equalizeHist(gImg1)
+normImg2 = cv2.equalizeHist(gImg2)
+
+mask = getMask2(normImg1, normImg2)
+
+cv2.imshow('Mask', mask)
 
 cv2.imshow('1', normImg1)
-cv2.imshow('2', rotatedImage2)
+cv2.imshow('2', normImg2)
 cv2.waitKey(0)
