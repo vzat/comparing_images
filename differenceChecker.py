@@ -85,7 +85,7 @@ def addBorders(img):
     offsetX = x2 % 2
     offsetY = y2 % 2
 
-    mask[int(cy-cy2):int(cy+cy2 + offsetY) , int(cx-cx2):int(cx+cx2+offsetY)] = img[0:y2, 0:x2]
+    mask[int(cy-cy2):int(cy+cy2 + offsetY) , int(cx-cx2):int(cx+cx2 + offsetX)] = img[0:y2, 0:x2]
 
     return (mask)
 
@@ -296,7 +296,7 @@ def getMask(img1, img2):
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     mask = cv2.dilate(mask, shape, iterations = 10)
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    mask = cv2.erode(mask, shape, iterations = 18)
+    mask = cv2.erode(mask, shape, iterations = 15)
 
     return mask
 
@@ -420,7 +420,15 @@ def getBestPatchesAuto(sourceImg, checkImg, patches):
     return bestPatches
 
 
-# TODO: Replace with easygui
+# TODO:
+# Read Imgs with easygui
+# ui using easygui
+# Try to get the inner bounding rect for clahe
+# Improve getMask2 to contain the right missing part (maybe use bounding ellipse instead of bounding rect)
+# Decide which getMask function we're going to use
+# Add intro comments
+# Show images side-by-side (the smaller image needs black borders)
+
 imagesPath = 'images/'
 outputPath = 'output/'
 fileExtension = '.jpg'
