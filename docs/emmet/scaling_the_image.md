@@ -14,7 +14,14 @@ To ensure we reach our goal, I have drawn a new PCB image and took a picture of 
 
 ## Get Scaling Level
 
-First off we need to figure out by how much to scale the image. We will do this by getting the two best matches between the images, finding the distance between these points for both images and returning the smaller distance divided by the larger one. This function will take one parameter, matches, which will be the dictionary returned when calling our getMatches() function.
+First off we need to figure out by how much to scale the image. We will do this by getting the two best matches between the images, finding the distance between these points for both images and returning the smaller distance divided by the larger one. 
+
+| PCB 1 | PCB 2 |
+| :---: | :---: |
+| <img src="../images/distPCB1.jpg" width="300"> | <img src="../images/distPCB2.jpg" width="300"> | 
+| The black dots represent matches | The red lines represent distance between them |
+
+This function will take one parameter, matches, which will be the dictionary returned when calling our getMatches() function.
 
 ### Get Top Two Matches
 
@@ -45,7 +52,7 @@ dist2 = getDistance(point2AX, point2AY, point2BX, point2BY)
 
 ### Return the Scaling Level
 
-Finally, we check to see which distance value is lower and return that value divided by the other other one. We do this so that when we scale, we're scaling the larger PCB board down to the smaller one to avoid losing any details. Note how we also return either a 1 or a 0. This is to the scaling function which image to scale.
+Finally, we check to see which distance value is lower and return that value divided by the other other one. We do this so that when we scale, we're scaling the larger PCB board down to the smaller one to avoid losing any details. Note how we also return either a 1 or a 0. This is used to tell the scaling function which image to scale.
 
 ```python
 # return smaller distance divided by larger distance
