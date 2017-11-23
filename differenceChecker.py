@@ -325,9 +325,10 @@ def getMask2(img1, img2):
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.dilate(mask, shape)
 
-    # theshold = 1.0
+    # thresholdMean = 1.0
 
     for i in range(100):
+        thresholds = []
         _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
         for contour in contours:
@@ -336,21 +337,41 @@ def getMask2(img1, img2):
             patch = img1[y : y + h, x : x + w]
             (_, value) = getBestMatch(img2, patch)
 
+            # thresholds.append(value)
+
             if value > 0.5:
                 cv2.drawContours(mask, contour, -1, 0)
             else:
                 cv2.drawContours(mask, contour, -1, 255, 3)
+
+        # shape = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        # mask = cv2.dilate(mask, shape)
+
+
+        # thresholdMean = np.mean(thresholds)
+        # if i == 0:
+        #     thresholdMean = 1.0
+        # for thresholdNo, threshold in enumerate(thresholds):
+        #     if threshold > thresholdMean:
+        #         cv2.drawContours(mask, contours, thresholdNo, 0)
+
+        # shape = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        # mask = cv2.dilate(mask, shape)
+
+        # thresholds = sorted(thresholds)
+        # print thresholdMean
 
         noContours = len(contours)
         if abs(noContours - lastNoContours) > 1:
             lastNoContours = noContours
         else:
             break;
-        print noContours
-        # theshold -= 0.05
 
-    # cv2.imshow('Mask', mask)
-    # cv2.waitKey(0)
+        # print thresholdMean
+        # print noContours
+        # 
+        # cv2.imshow('Mask', mask)
+        # cv2.waitKey(0)
 
     return mask
 
@@ -465,12 +486,57 @@ def getBestPatchesAuto(sourceImg, checkImg, patches):
             return bestPatches
     return bestPatches
 
+def addBar(img,new_width,new_height):
+	newImg = np.zeros((new_height, new_width, 3), np.uint8)
+
+	y1, x1 = np.shape(newImg)[:2]
+	cx = x1/2
+	cy = y1/2
+
+	y2, x2 = np.shape(img)[:2]
+	cx2 = x2/2
+	cy2 = y2/2
+
+    # Fix for odd sized images
+	offsetX = x2 % 2
+	offsetY = y2 % 2
+
+	newImg[int(cy-cy2):int(cy+cy2 + offsetY) , int(cx-cx2):int(cx+cx2 + offsetX)] = img[0:y2, 0:x2]
+
+	return newImg
+
+def addBars(img1,img2):
+
+	height1,width1=img1.shape[:2]
+	height2,width2=img2.shape[:2]
+
+	if width1 != width2:
+		if width1 > width2:
+			img2=addBar(img2,width1,height2)
+			height2,width2=img2.shape[:2]
+
+		else:
+			img1=addBar(img1,width2,height1)
+			height1,width1=img1.shape[:2]
+
+	if height1 != height2:
+		if height1>height2:
+
+			img2=addBar(img2,width2,height1)
+
+		else:
+
+			img1=addBar(img1,width1,height2)
+
+	return(img1,img2)
+
 
 # TODO:
 # Read Imgs with easygui
 # ui using easygui
 # Try to get the inner bounding rect for clahe
-# Improve getMask2 to contain the right missing part (maybe use bounding ellipse instead of bounding rect, combine differences)
+# Improve getMask2 to contain the right missing part
+# (maybe use bounding ellipse instead of bounding rect, combine differences)
 # Decide which getMask function we're going to use
 # Add intro comments
 # Show images side-by-side (the smaller image needs black borders)
@@ -504,7 +570,11 @@ bestPatches = getBestPatchesAuto(normImg1, normImg2, patches)
 for (x, y, w, h) in bestPatches:
     cv2.rectangle(img1, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
-cv2.imshow('Diffs', img1)
+(img1, img2) = addBars(img1, img2)
+
+stackedImages = np.hstack((img1, img2))
+
+cv2.imshow('Diffs', stackedImages)
 
 # cv2.imshow('1', normImg1)
 # cv2.imshow('2', normImg2)
