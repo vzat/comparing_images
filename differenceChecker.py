@@ -303,7 +303,15 @@ def getMask(img1, img2):
 def getMask2(img1, img2):
     img1Height, img1Width = img1.shape[:2]
 
+    img1 = cv2.equalizeHist(img1)
+    img2 = cv2.equalizeHist(img2)
+
+    # img1 = cv2.medianBlur(img1, 3)
+    # img2 = cv2.medianBlur(img2, 3)
+
     (img1Dif, img2Dif) = getDifferences(img1, img2)
+
+    # img1Dif.extend(img2Dif)
 
     mask = np.zeros((img1Height, img1Width, 1), np.uint8)
     mask[:, :] = 0
@@ -312,8 +320,12 @@ def getMask2(img1, img2):
 
     lastNoContours = len(img1Dif)
 
+    # mask = getMask4(img1, img2)
+
     shape = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.dilate(mask, shape)
+
+    # theshold = 1.0
 
     for i in range(100):
         _, contours, _ = cv2.findContours(image = mask.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
@@ -334,6 +346,8 @@ def getMask2(img1, img2):
             lastNoContours = noContours
         else:
             break;
+        print noContours
+        # theshold -= 0.05
 
     # cv2.imshow('Mask', mask)
     # cv2.waitKey(0)
@@ -372,6 +386,38 @@ def getMask3(img1, img2):
 
         cv2.imshow('Mask', mask)
         cv2.waitKey(0)
+
+def getMask4(img1, img2):
+    img1Height, img1Width = img1.shape[:2]
+
+    img1 = cv2.equalizeHist(img1)
+    img2 = cv2.equalizeHist(img2)
+
+    (img1Dif, img2Dif) = getDifferences(img1, img2)
+
+    diffs = []
+    for dif1 in img1Dif:
+        noMatch = True
+        for dif2 in img2Dif:
+            x1 = int(dif1['x'])
+            y1 = int(dif1['y'])
+            x2 = int(dif2['x'])
+            y2 = int(dif2['y'])
+
+            if abs(x1 - x2) < 1 and abs(y1 - y2) < 1:
+                noMatch = False
+
+        if noMatch:
+            diffs.append(dif1)
+            diffs.append(dif2)
+
+    mask = np.zeros((img1Height, img1Width, 1), np.uint8)
+    mask[:, :] = 0
+    for dif in diffs:
+        mask[int(dif['y']), int(dif['x'])] = 255
+
+    return mask
+
 
 
 def getBestMatch(img, patch):
@@ -424,7 +470,7 @@ def getBestPatchesAuto(sourceImg, checkImg, patches):
 # Read Imgs with easygui
 # ui using easygui
 # Try to get the inner bounding rect for clahe
-# Improve getMask2 to contain the right missing part (maybe use bounding ellipse instead of bounding rect)
+# Improve getMask2 to contain the right missing part (maybe use bounding ellipse instead of bounding rect, combine differences)
 # Decide which getMask function we're going to use
 # Add intro comments
 # Show images side-by-side (the smaller image needs black borders)
@@ -447,10 +493,7 @@ gImg1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 gImg2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
 # (normImg1, normImg2) = normaliseImages(gImg1, gImg2)
 
-normImg1 = cv2.equalizeHist(gImg1)
-normImg2 = cv2.equalizeHist(gImg2)
-
-mask = getMask2(normImg1, normImg2)
+mask = getMask2(gImg1, gImg2)
 
 patches = getAllPatches(mask)
 
