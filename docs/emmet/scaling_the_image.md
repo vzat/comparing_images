@@ -14,7 +14,7 @@ To ensure we reach our goal, I have drawn a new PCB image and took a picture of 
 
 ## Get Scaling Level
 
-First off we need to figure out by how much to scale the image. We will do this by getting the two best matches between the images, finding the distance between these points for both images and returning the smaller distance divided by the larger one. 
+First off we need to figure out by how much to scale the image. We will do this by getting the two best matches between the images, finding the distance between these points for both images and returning the smaller distance divided by the larger one. If we scale the larger image by this value, both lines below should be the same size.
 
 | PCB 1 | PCB 2 |
 | :---: | :---: |
@@ -175,6 +175,17 @@ def scaleImage(img1, img2):
     else:
         return (S, img2)
 ```
+
+
+## Result 
+
+Below we can see the results of the above functions on our fake PCB board images. Unfortunately, it is difficult to see much of a difference as this blog software scales both images to the same size. To fully show the results, the dimensions of each image are attached below them. PCB 1's size being smaller that PCB 2 indicates that PCB 1 was successfully scaled down to the point that it's pcb board is the same dimensions as the pcb board in PCB 2. 
+
+| PCB 1 | PCB 2 |
+| :---: | :---: |
+| <img src="../images/scaledImagePCB1.jpg" width="300"> | <img src="../images/scaledImagePCB2.jpg" width="300"> | 
+| Dimensions: 743 x 557 | Dimensions: 1008 x 756 |
+
 
 ## Conclusion
 

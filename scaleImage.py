@@ -108,16 +108,18 @@ def scaleImage(img1, img2):
 
 pcb1, pcb2 = scaleImage(pcb1, pcb2);
 
-# h, w = np.shape(pcb1)[:2]
-# h1, w1 = np.shape(pcb2)[:2]
+h, w = np.shape(pcb1)[:2]
+h1, w1 = np.shape(pcb2)[:2]
 # # h2, w2 = np.shape(pcb2)[:2]
 # # #cv2.imwrite(outputPath + 'scaledImage' + fileExtension, R)
 
 # # print(w, h)
 
 
-# pcb1 = cv2.resize(pcb1, (int(w*0.25), int(h*0.25)))
-# pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
+pcb1 = cv2.resize(pcb1, (int(w*0.25), int(h*0.25)))
+pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
+cv2.imwrite(outputPath + 'scaledImagePCB1' + fileExtension, pcb1)
+cv2.imwrite(outputPath + 'scaledImagePCB2' + fileExtension, pcb2)
 # # pcb2 = cv2.resize(pcb2,(int(w2*0.25), int(h2*0.25)))
 # cv2.imshow('pcb1', pcb1)
 # cv2.imshow('pcb2', pcb2)
