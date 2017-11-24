@@ -21,6 +21,8 @@ Comparing two images and spotting the differences
 
 [Week 10 - Bug fixing and improvements](week10.md)
 
+[Week 11 - Finishing touches](week11.md)
+
 ## Emmet's Docs
 
 [Cleaning the Image](emmet/cleaning_the_image.md)
