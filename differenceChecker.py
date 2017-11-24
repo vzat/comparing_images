@@ -80,8 +80,7 @@
 #
 #           * The coordinates are loaded in the locationCorrection() function. The getMatches() will be used to once more find the differences
 #             in the images and using by using the difference we find the sum needed to be transitioned. A translation matrix is created with
-#             the x and y axis difference [2]. The warpAffine() function will
-#             take this in and apply it to our image.
+#             the x and y axis difference [2]. The warpAffine() function will take this in and apply it to our image.
 #
 #   2.3 Getting the mask
 #   - The mask of the differences will be populated here. Using histogram equalization techniques, morphological operations and contour
@@ -97,7 +96,8 @@
 #             Template matching is then applied to every contour seeing if it doesn't exist in the second image.
 #             If it did we were able to automate our "dilation" loop which works by drawing a black contour on pixels less than a certain size thus
 #             coloring them black while drawing a white contour around pixels that have conjoined.
-#             We repeat this until there are no more iterations that can be made.
+#             We repeat this until there are no more iterations that can be made. Just using dilation would makes all the pixels bigger.
+#             This only increases the biggest differences.
 #
 #   2.4 Applying Template Matching
 #   - Using the mask attained from 2.3 we are able to draw a contour around all the differences discovered. We apply CLAHE to the images to sharpen the image
@@ -129,7 +129,21 @@
 ###############################
 
 ###############################
-#   3. References
+#
+#   3. Extra Notes:
+#
+#       * While template matching is better at detecting differences, it would take too long to check every pixel in the images.
+#         This is why the features are filtered using feature detection first.
+#
+#       * Two types of normalisation are used in the project. While CLAHE normalises the images better, it creates a lot of noise.
+#         Noise is very detrimental to the feature detection algorithm. This is why equalize hist is used for feature detection.
+#         When the false-positive contours are eliminated using template matching, CLAHE is used as it makes the images match even more.
+#
+###############################
+
+###############################
+#
+#   4. References
 #
 #   [1] 'AKAZE local features matching', 2014, [Online].
 #       Available: http://docs.opencv.org/3.0-beta/doc/tutorials/features2d/akaze_matching/akaze_matching.html.
