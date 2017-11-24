@@ -50,7 +50,7 @@ def getMask(img1, img2):
 ```
 
 ## Changing the normalisation methods
-Before the CLAHE normalisation was used for all the project's operations. Now the rotation, scaling and translation are applied on the original images. The feature detection is then used on images normalised with `cv2.equaliseHist()`. This normalisation method works better for feature detection as it distributes the intensity. This way feature detection doesn't find differences in areas with different lighting. Finally, the CLAHE normalised images were used for the template matching function which eliminates the false-positives patches found in the previous step.
+Before the CLAHE normalisation was used for all the project's operations. Now the rotation, scaling and translation are applied on the original images. The feature detection is then used on images normalised with `cv2.equaliseHist()`. This normalisation method works better for feature detection as it distributes the intensity [1]. This way feature detection doesn't find differences in areas with different lighting. Finally, the CLAHE normalised images were used for the template matching function which eliminates the false-positives patches found in the previous step.
 
 | Equalise Histogram | CLAHE |
 | :---: | :---: |
@@ -58,8 +58,11 @@ Before the CLAHE normalisation was used for all the project's operations. Now th
 
 
 ## Final Result
-The following image contains the differences between `pcb1.jpg` and `pcb2.jpg` found using the difference checker algorithm.
+The following image contains the differences between `pcb1.jpg` and `pcb2.jpg`, found using the difference checker algorithm.
 
 | Differences |
 | :---: |
 | <img src="images/final.jpg" width="600"> |
+
+## References
+[1] R.C.Gonzalez and R.E.Woods, 'Digital Image Processing', Third Edition, Pearson Education International, 2007, 142-160.
