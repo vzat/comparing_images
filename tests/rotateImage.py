@@ -3,14 +3,15 @@
 import numpy as np
 import cv2
 import easygui
-import math
+from math import atan
 
 imagesPath = 'images/'
 outputPath = 'output/'
 fileExtension = '.jpg'
 
-pcb1 = cv2.imread(imagesPath + 'pcb1.jpg')
-pcb2 = cv2.imread(imagesPath + 'pcb2.jpg')
+pcb1 = cv2.imread(imagesPath + 'pcb1' + fileExtension)
+pcb2 = cv2.imread(imagesPath + 'pcb2' + fileExtension)
+
 
 # Calculate Euclidean Distance between 2 points
 def getDistance(x1, y1, x2, y2):
@@ -56,7 +57,7 @@ def getMatches(img1, img2):
 
     return matchedCoordinates
 
-matches = getMatches(pcb1, pcb2)
+# matches = getMatches(pcb1, pcb2)
 
 
 # Use the matches list to find the orientation of the second image
@@ -65,7 +66,8 @@ matches = getMatches(pcb1, pcb2)
 # to get the x coordinate from the first image
 
 
-def getRotationAngle(matches):
+def getRotationAngle(img1, img2):
+    matches = getMatches(img1, img2)
     point1AX = matches[0]['pt1']['x']
     point1AY = matches[0]['pt1']['y']
     point2AX = matches[0]['pt2']['x']
@@ -76,8 +78,8 @@ def getRotationAngle(matches):
     point2BX = matches[1]['pt2']['x']
     point2BY = matches[1]['pt2']['y']
 
-    angle1 = matches[0]['pt1']['angle']
-    angle2 = matches[0]['pt2']['angle']
+    # angle1 = matches[0]['pt1']['angle']
+    # angle2 = matches[0]['pt2']['angle']
 
     # m1 = ((point1BY - point1AY) / (point1BX - point1AX))
     # line1Angle = math.atan(m1)
@@ -89,12 +91,48 @@ def getRotationAngle(matches):
     #
     # rotationAngle = np.rad2deg(rotationAngle)
 
-    return angle2 - angle1
+    # return angle2 - angle1
+
+    # angle1A = np.pi + np.arctan2(-point1AY, point1AX)
+    # angle2A = np.pi + np.arctan2(-point2AY, point2AX)
+    # angle1 = angle1A - angle2A
+    #
+    # angle1B = np.pi + np.arctan2(-point1BY, point1BX)
+    # angle2B = np.pi + np.arctan2(-point2BY, point2BX)
+    # angle2 = angle1B - angle2B
+
+    # angle1 = np.pi + np.arctan2(point1AY - point2AY, point1AX - point2AX)
+    # angle2 = np.pi + np.arctan2(point1BY - point2BY, point1BX - point2BX)
+
+    angle1 = -np.arctan2(point1AY, point1AX) - np.arctan2(point2AY, point2AX)
+    angle2 = -np.arctan2(point1BY, point1BX) - np.arctan2(point2BY, point2BX)
+
+    # print 'New Angle'
+    # print np.rad2deg(angle1 - angle2)
+    angle = angle1 - angle2
+
+    print (np.rad2deg(angle))
 
 
-rotationAngle = getRotationAngle(matches)
+    m1 = ((point1BY - point1AY) / (point1BX - point1AX))
+    line1Angle = atan(m1)
 
-print(rotationAngle)
+    m2 = ((point2BY - point2AY) / (point2BX - point2AX))
+    line2Angle = atan(m2)
+
+    rotationAngle = (line2Angle - line1Angle)
+
+    rotationAngle = np.rad2deg(rotationAngle)
+    print(rotationAngle)
+
+    return(rotationAngle)
+
+
+
+
+rotationAngle = getRotationAngle(pcb1, pcb2)
+
+# print(rotationAngle)
 
 
 def getDiameter(img):
@@ -152,7 +190,7 @@ def removeBorders(img):
 
 
 
-def rotateImage(img):
+def rotateImage(img, rotationAngle):
     y, x = np.shape(img)[:2]
     cx = x/2
     cy = y/2
@@ -162,43 +200,45 @@ def rotateImage(img):
 
     return R
 
-R = rotateImage(borderedImg)
+R = rotateImage(borderedImg, rotationAngle)
 
-def scaleImage(img1, img2):
-    # get shape of two images
-    # scale second image to the first
-    y1, x1 = np.shape(img1)[:2]
-    y2, x2 = np.shape(img2)[:2]
+def checkRotation(img1, img2):
+    matches = getMatches(img1, img2)
 
-    x1 = float(x1)
-    y1 = float(y1)
-    x2 = float(x2)
-    y2 = float(y2)
+    point1AX = matches[0]['pt1']['x']
+    point2AX = matches[0]['pt2']['x']
 
-    if x1 >= x2:
-        scaleW = x2/x1
-        w = x1
+    point1BX = matches[1]['pt1']['x']
+    point2BX = matches[1]['pt2']['x']
+
+    if(point1AX < point1BX and point2AX > point2BX):
+        return False
+    elif(point1AX > point1BX and point2AX < point2BX):
+        return False
     else:
-        scaleW = x1/x2
-        w = x2
+        return True
 
-    if y1 >= y2:
-        scaleH = y2/y1
-        h = y1
-    else:
-        scaleH = y1/y2
-        h = y2
+if(checkRotation(pcb1, R) == False):
+    R = rotateImage(R, 180)
+    print("re-rotated image")
 
-    S = cv2.resize(img2,(int(w*scaleW), int(h*scaleH)))
 
-    return S
 
 cropped = removeBorders(R)
-Result = scaleImage(pcb1, cropped)
+# Result = scaleImage(pcb1, cropped)
 
-cv2.imshow('Result', Result)
+# h, w = np.shape(cropped)[:2]
+# h1, w1 = np.shape(pcb2)[:2]
+# h2, w2 = np.shape(pcb1)[:2]
+
+# cropped = cv2.resize(cropped, (int(w*0.25), int(h*0.25)))
+# pcb2 = cv2.resize(pcb2, (int(w1*0.25), int(h1*0.25)))
+# pcb1 = cv2.resize(pcb1, (int(w2*0.25), int(h2*0.25)))
+
+# cv2.imshow('original', pcb2)
 # cv2.imshow('pcb1', pcb1)
-cv2.imshow('cropped', cropped)
-cv2.imwrite(outputPath + 'addBorders' + fileExtension, borderedImg)
+# # cv2.imshow('pcb1', pcb1)
+cv2.imshow('rotated', cropped)
+# cv2.imwrite(outputPath + 'addBorders' + fileExtension, borderedImg)
 # cv2.imwrite(outputPath + 'R' + fileExtension, R)
 cv2.waitKey(0)
